@@ -1,0 +1,1 @@
+cat - | /Library/Java/JavaVirtualMachines/jdk1.8.0_131.jdk/Contents/Home/bin/java -Dfile.encoding=UTF-8 -classpath /Users/ssarnobat/github/java_data_dependency_csv/java_csv_data_dependency/target/classes com.rohidekar.Main
