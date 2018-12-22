@@ -3,13 +3,11 @@ package com.rohidekar;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -31,8 +29,6 @@ import org.apache.bcel.generic.MethodGen;
 import org.apache.bcel.generic.ObjectType;
 import org.apache.bcel.generic.ReturnInstruction;
 import org.apache.bcel.generic.Type;
-import org.apache.commons.collections.IteratorUtils;
-import org.apache.commons.io.FileUtils;
 
 import com.google.common.collect.Lists;
 
@@ -123,34 +119,9 @@ public class Main {
     }
     _printRelationships:
     {
-      for (String relationship : relationshipsCsvLines) {
-        //System.out.println(relationship);
-      }
     }
 
     System.err.println("Now use d3_helloworld_csv.git/singlefile_automated/ for visualization");
-  }
-
-  /** @param jarOrClassDir - jar or class directory */
-  private static Collection<String> getJavaClassFilePathsFromResource(String jarOrClassDir) {
-    //Map<String, JavaClass> javaClasses = new HashMap<String, JavaClass>();
-    Collection<String> javaClasses = new LinkedList<String>();
-    boolean isJar = jarOrClassDir.endsWith("jar");
-    if (isJar) {
-      throw new RuntimeException("See old version");
-    } else {
-      // Assume it's a directory
-      String[] extensions = {"class"};
-      Iterator<File> classesIter =
-          FileUtils.iterateFiles(new File(jarOrClassDir), extensions, true);
-      @SuppressWarnings("unchecked")
-      Collection<File> files = IteratorUtils.toList(classesIter);
-      for (File aClass : files) {
-        String absolutePath = aClass.getAbsolutePath();
-        javaClasses.add(absolutePath);
-      }
-    }
-    return javaClasses;
   }
 
   /**
@@ -163,12 +134,10 @@ public class Main {
   private static class MyClassVisitor extends ClassVisitor {
 
     private static class MyMethodVisitor extends MethodVisitor {
-      private final JavaClass visitedClass;
       private final ConstantPoolGen constantsPool;
 
       MyMethodVisitor(MethodGen methodGen, JavaClass javaClass) {
         super(methodGen, javaClass);
-        this.visitedClass = javaClass;
         this.constantsPool = methodGen.getConstantPool();
         // main bit
         if (methodGen.getInstructionList() != null) {
@@ -299,7 +268,6 @@ public class Main {
     public void visitField(Field field) {
       Type fieldType = field.getType();
       if (fieldType instanceof ObjectType) {
-        ObjectType objectType = (ObjectType) fieldType;
       }
     }
   }
