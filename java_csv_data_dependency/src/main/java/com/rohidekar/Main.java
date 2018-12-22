@@ -106,7 +106,7 @@ public class Main {
 
       // Visit each class
       for (JavaClass javaClass : javaClasses) {
-        System.err.println("  Main.main() class = " + javaClass.getClassName());
+        System.err.println("Main.main() class = " + javaClass.getClassName());
         // Methods
         for (Method method : javaClass.getMethods()) {
           System.err.println("    Main.main() method = " + method);
@@ -261,7 +261,19 @@ public class Main {
             instructionHandle != null;
             instructionHandle = instructionHandle.getNext()) {
           Instruction anInstruction = instructionHandle.getInstruction();
-          System.out.println("        Main.MyMethodVisitor.MyMethodVisitor() " + anInstruction);
+          System.out.println(
+              "        Main.MyMethodVisitor.MyMethodVisitor() instruction = " + anInstruction);
+          System.out.println(
+        		  "          Main.MyMethodVisitor.MyMethodVisitor() instruction opcode = "
+        				  + anInstruction.getName());
+          short opcode = anInstruction.getOpcode();
+          if (opcode == 176) { // return
+          } else if (opcode == 182) {
+            // invoke virtual
+        	  System.out.println("          Main.MyMethodVisitor.MyMethodVisitor() virtual method " + anInstruction.getName());
+          } else {
+        	  pickup
+          }
           if (!shouldVisitInstruction(anInstruction)) {
             anInstruction.accept(this);
           }
