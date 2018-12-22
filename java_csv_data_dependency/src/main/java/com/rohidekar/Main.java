@@ -108,6 +108,7 @@ public class Main {
       for (JavaClass javaClass : javaClasses) {
         // Methods
         for (Method method : javaClass.getMethods()) {
+          System.out.println("Main.main() " + method);
           method.accept(new MyClassVisitor(javaClass) {});
 
           // fields
@@ -171,6 +172,7 @@ public class Main {
 
     @Override
     public void visitJavaClass(JavaClass javaClass) {
+      System.out.println("Main.MyClassVisitor.visitJavaClass() " + javaClass);
       if (this.isVisited(javaClass)) {
         return;
       }
@@ -335,10 +337,7 @@ public class Main {
     }
 
     private void linkMethodToSuperclassMethod(String unqualifiedMethodName, MyInstruction target)
-        throws IllegalAccessError {
-
-    }
-
+        throws IllegalAccessError {}
 
     @Override
     public void start() {}

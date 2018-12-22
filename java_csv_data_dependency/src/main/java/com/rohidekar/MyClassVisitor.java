@@ -67,6 +67,26 @@ class MyClassVisitor extends ClassVisitor {
     }
   }
 
+  private static class Ignorer {
+
+    public static boolean shouldIgnore(JavaClass iClass) {
+      return shouldIgnore(iClass.getClassName());
+    }
+
+    private static final String[] substringsToIgnore = {
+      "java", "Logger", ".toString", "Exception",
+    };
+    public static boolean shouldIgnore(String classFullName) {
+      for (String substringToIgnore : substringsToIgnore) {
+        if (classFullName.contains(substringToIgnore)) {
+          return true;
+        }
+      }
+      System.err.println(classFullName + " was not ignored");
+      return false;
+    }
+  }
+
   public static List<String> getInterfacesAndSuperClasses(JavaClass javaClass) {
     List<String> parentClasses =
         Lists.asList(javaClass.getSuperclassName(), javaClass.getInterfaceNames());
@@ -78,7 +98,7 @@ class MyClassVisitor extends ClassVisitor {
     String className = classToVisit.getClassName();
     ConstantPoolGen classConstants = new ConstantPoolGen(classToVisit.getConstantPool());
     MethodGen methodGen = new MethodGen(method, className, classConstants);
-    new MyMethodVisitor(methodGen, classToVisit, relationships).start();
+    //new MyMethodVisitor(methodGen, classToVisit, relationships).start();
   }
 
   @Override
@@ -86,12 +106,12 @@ class MyClassVisitor extends ClassVisitor {
     Type fieldType = field.getType();
     if (fieldType instanceof ObjectType) {
       ObjectType objectType = (ObjectType) fieldType;
-      addContainmentRelationship(this.classToVisit, objectType.getClassName(), relationships, true);
+      addContainmentRelationship(this.classToVisit, objectType.getClassName(), true);
     }
   }
 
-  public static void addContainmentRelationship(JavaClass classToVisit,
-      String childClassNameQualified, Relationships relationships, boolean allowDeferral) {
+  public static void addContainmentRelationship(
+      JavaClass classToVisit, String childClassNameQualified, boolean allowDeferral) {
     if (Ignorer.shouldIgnore(childClassNameQualified)) {
       return;
     }
@@ -99,23 +119,15 @@ class MyClassVisitor extends ClassVisitor {
     try {
       jc = Repository.lookupClass(childClassNameQualified);
     } catch (ClassNotFoundException e) {
-      
-        System.err.println(e);
+
+      System.err.println(e);
       if (allowDeferral) {
-        relationships.deferContainmentVisit(classToVisit, childClassNameQualified);
       } else {
-        jc = relationships.getClassDef(childClassNameQualified);
-        if (jc == null) {
-          if (!Ignorer.shouldIgnore(childClassNameQualified)) {
-            System.err.println("WARN: Still can't find " + childClassNameQualified);
-          }
-        }
       }
     }
     if (jc == null) {
       System.err.println("WARN: Couldn't find " + childClassNameQualified);
     } else {
-      relationships.addContainmentRelationship(classToVisit.getClassName(), jc);
     }
   }
 }
