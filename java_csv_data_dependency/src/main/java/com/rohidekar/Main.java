@@ -156,42 +156,30 @@ public class Main {
   /**
    * This is the entry point to the magic / workhorse. Everything outside here is my algorithm. Most
    * of this layer is using BECL's visitor.
-   * 
-   * I hate the visitor pattern, it's so object-oriented. We keep its class life time as small as possible
+   *
+   * <p>I hate the visitor pattern, it's so object-oriented. We keep its class life time as small as
+   * possible
    */
   private static class MyClassVisitor extends ClassVisitor {
 
     private static class MyMethodVisitor extends MethodVisitor {
       private final JavaClass visitedClass;
       private final ConstantPoolGen constantsPool;
-      private final String parentMethodQualifiedName;
-  
+
       MyMethodVisitor(MethodGen methodGen, JavaClass javaClass) {
         super(methodGen, javaClass);
         this.visitedClass = javaClass;
         this.constantsPool = methodGen.getConstantPool();
-        this.parentMethodQualifiedName =
-            MyInstruction.getQualifiedMethodName(methodGen, visitedClass);
         // main bit
         if (methodGen.getInstructionList() != null) {
           for (InstructionHandle instructionHandle = methodGen.getInstructionList().getStart();
               instructionHandle != null;
               instructionHandle = instructionHandle.getNext()) {
             Instruction anInstruction = instructionHandle.getInstruction();
-            //          System.out.println(
-            //              "        Main.MyMethodVisitor.MyMethodVisitor() instruction = " + anInstruction);
-            //          System.out.println(
-            //              "        Main.MyMethodVisitor.MyMethodVisitor() instruction opcode = "
-            //                  + anInstruction.getName());
             short opcode = anInstruction.getOpcode();
             if (opcode == 176) { // return
             } else if (opcode == 182) {
-              // invoke virtual
-              //            System.out.println(
-              //                "          Main.MyMethodVisitor.MyMethodVisitor() virtual method "
-              //                    + anInstruction.getName());
             } else {
-              //pickup
             }
             if (!shouldVisitInstruction(anInstruction)) {
               anInstruction.accept(this);
@@ -202,13 +190,13 @@ public class Main {
         // parent classes' method is overriden (there are several)
         // TODO: Wait, we can use the repository to get the java class.
       }
-  
+
       private static boolean shouldVisitInstruction(Instruction iInstruction) {
         return ((InstructionConstants.INSTRUCTIONS[iInstruction.getOpcode()] != null)
             && !(iInstruction instanceof ConstantPushInstruction)
             && !(iInstruction instanceof ReturnInstruction));
       }
-  
+
       /** instance method */
       @Override
       public void visitINVOKEVIRTUAL(INVOKEVIRTUAL iInstruction) {
@@ -221,75 +209,23 @@ public class Main {
                 + " :: "
                 + iInstruction.getMethodName(constantsPool)
                 + "()");
-  
-        addMethodCallRelationship(
-            iInstruction.getReferenceType(constantsPool),
-            iInstruction.getMethodName(constantsPool),
-            iInstruction,
-            iInstruction.getArgumentTypes(constantsPool));
       }
-  
+
       /** super method, private method, constructor */
       @Override
-      public void visitINVOKESPECIAL(INVOKESPECIAL iInstruction) {
-        addMethodCallRelationship(
-            iInstruction.getReferenceType(constantsPool),
-            iInstruction.getMethodName(constantsPool),
-            iInstruction,
-            iInstruction.getArgumentTypes(constantsPool));
-      }
-  
+      public void visitINVOKESPECIAL(INVOKESPECIAL iInstruction) {}
+
       @Override
-      public void visitINVOKEINTERFACE(INVOKEINTERFACE iInstruction) {
-        addMethodCallRelationship(
-            iInstruction.getReferenceType(constantsPool),
-            iInstruction.getMethodName(constantsPool),
-            iInstruction,
-            iInstruction.getArgumentTypes(constantsPool));
-      }
-  
+      public void visitINVOKEINTERFACE(INVOKEINTERFACE iInstruction) {}
+
       @Override
-      public void visitINVOKESTATIC(INVOKESTATIC iInstruction) {
-        addMethodCallRelationship(
-            iInstruction.getReferenceType(constantsPool),
-            iInstruction.getMethodName(constantsPool),
-            iInstruction,
-            iInstruction.getArgumentTypes(constantsPool));
-      }
-  
-      private void addMethodCallRelationship(
-          Type iClass,
-          String unqualifiedMethodName,
-          Instruction anInstruction,
-          Type[] argumentTypes) {
-        if (!(iClass instanceof ObjectType)) {
-          return;
-        }
-        // method calls
-        {
-          ObjectType childClass = (ObjectType) iClass;
-          MyInstruction target = new MyInstruction(childClass, unqualifiedMethodName);
-          // link to superclass method - note: this will not work for the top-level
-          // method (i.e.
-          // parentMethodQualifiedName). Only for target.
-          // We can't do it for the superclass without a JavaClass object. We don't
-          // know which superclass
-          // the method overrides.
-          //        System.err.println(
-          //            "        Main.MyMethodVisitor.addMethodCallRelationship() " + unqualifiedMethodName);
-          linkMethodToSuperclassMethod(unqualifiedMethodName, target);
-        }
-        // class dependencies for method calls
-      }
-  
-      private void linkMethodToSuperclassMethod(String unqualifiedMethodName, MyInstruction target)
-          throws IllegalAccessError {}
-  
+      public void visitINVOKESTATIC(INVOKESTATIC iInstruction) {}
+
       @Override
       public void start() {}
     }
 
-  private JavaClass classToVisit;
+    private JavaClass classToVisit;
     // Do we need to keep track of visited classes? Maybe cycles will cause problems.
     private Map<String, JavaClass> visitedClasses = new HashMap<String, JavaClass>();
 
@@ -385,49 +321,11 @@ public class Main {
     }
   }
 
-  private static class MyInstruction {
+  public static String getQualifiedMethodName(MethodGen methodGen, JavaClass visitedClass) {
+    return getQualifiedMethodName(visitedClass.getClassName(), methodGen.getName());
+  }
 
-    private String _qualifiedMethodName;
-
-    public MyInstruction(ObjectType iClass, String unqualifiedMethodName) {
-      this(iClass.getClassName(), unqualifiedMethodName);
-    }
-
-    public MyInstruction(String classNameQualified, String unqualifiedMethodName) {
-      String qualifiedMethodName =
-          getQualifiedMethodName(classNameQualified, unqualifiedMethodName);
-      this._qualifiedMethodName = qualifiedMethodName;
-      if (qualifiedMethodName.equals(
-          "com.rohidekar.callgraph.GraphNodeInstruction.getMethodNameQualified()")) {
-        throw new IllegalAccessError("MyInstruction");
-      }
-    }
-
-    public static String getQualifiedMethodName(MethodGen methodGen, JavaClass visitedClass) {
-      return getQualifiedMethodName(visitedClass.getClassName(), methodGen.getName());
-    }
-
-    public static String getQualifiedMethodName(String className, String methodName) {
-      return className + "." + methodName + "()";
-    }
-
-    public String getMethodNameQualified() {
-      return this._qualifiedMethodName;
-    }
-
-    @Override
-    public boolean equals(Object that) {
-      return this.getMethodNameQualified().equals(((MyInstruction) that).getMethodNameQualified());
-    }
-
-    @Override
-    public int hashCode() {
-      return this.getMethodNameQualified().hashCode();
-    }
-
-    @Override
-    public String toString() {
-      return this._qualifiedMethodName;
-    }
+  public static String getQualifiedMethodName(String className, String methodName) {
+    return className + "." + methodName + "()";
   }
 }
