@@ -106,9 +106,10 @@ public class Main {
 
       // Visit each class
       for (JavaClass javaClass : javaClasses) {
+        System.err.println("  Main.main() class = " + javaClass.getClassName());
         // Methods
         for (Method method : javaClass.getMethods()) {
-          System.out.println("Main.main() " + method);
+          System.err.println("    Main.main() method = " + method);
           method.accept(new MyClassVisitor(javaClass) {});
 
           // fields
@@ -122,7 +123,7 @@ public class Main {
     _printRelationships:
     {
       for (String relationship : relationshipsCsvLines) {
-        System.out.println(relationship);
+        //System.out.println(relationship);
       }
     }
 
@@ -210,6 +211,7 @@ public class Main {
 
     @Override
     public void visitMethod(Method method) {
+      System.out.println("      Main.MyClassVisitor.visitMethod() " + method);
       String className = classToVisit.getClassName();
       ConstantPoolGen classConstants = new ConstantPoolGen(classToVisit.getConstantPool());
       MethodGen methodGen = new MethodGen(method, className, classConstants);
@@ -259,6 +261,7 @@ public class Main {
             instructionHandle != null;
             instructionHandle = instructionHandle.getNext()) {
           Instruction anInstruction = instructionHandle.getInstruction();
+          System.out.println("        Main.MyMethodVisitor.MyMethodVisitor() " + anInstruction);
           if (!shouldVisitInstruction(anInstruction)) {
             anInstruction.accept(this);
           }
@@ -331,6 +334,8 @@ public class Main {
         // We can't do it for the superclass without a JavaClass object. We don't
         // know which superclass
         // the method overrides.
+        System.err.println(
+            "        Main.MyMethodVisitor.addMethodCallRelationship() " + unqualifiedMethodName);
         linkMethodToSuperclassMethod(unqualifiedMethodName, target);
       }
       // class dependencies for method calls
