@@ -108,7 +108,14 @@ public class Main {
         // Methods
         for (Method method : javaClass.getMethods()) {
           System.err.println("2) " + javaClass.getClassName() + " :: " + method.getName());
-          method.accept(new MyClassVisitor(javaClass) {});
+
+          MethodGen methodGen =
+              new MethodGen(
+                  method,
+                  javaClass.getClassName(),
+                  new ConstantPoolGen(javaClass.getConstantPool()));
+          System.err.println("2) " + javaClass.getClassName() + " :: " + method.getName() + "()");
+          visitMethod(methodGen, methodGen.getConstantPool());
 
           // fields
           Field[] fs = javaClass.getFields();
@@ -132,151 +139,17 @@ public class Main {
    * <p>I hate the visitor pattern, it's so object-oriented. We keep its class life time as small as
    * possible
    */
+  @Deprecated
   private static class MyClassVisitor extends ClassVisitor {
-
-    @Deprecated
-    private static class MyMethodVisitor extends MethodVisitor {
-      private final ConstantPoolGen constantsPool;
-
-      MyMethodVisitor(MethodGen methodGen, JavaClass javaClass) {
-        super(methodGen, javaClass);
-        this.constantsPool = methodGen.getConstantPool();
-
-        visitMethod(methodGen, constantsPool);
-        // We can't figure out the superclass method of the parent method because we don't know which
-        // parent classes' method is overriden (there are several)
-        // TODO: Wait, we can use the repository to get the java class.
-      }
-
-      static void visitMethod(MethodGen methodGen, ConstantPoolGen constantPoolGen) {
-        // main bit
-        if (methodGen.getInstructionList() != null) {
-
-          Stack<String> stack = new Stack<String>();
-          System.out.println("2) " + methodGen.getClassName() + " :: " + methodGen.getName());
-          for (InstructionHandle instructionHandle = methodGen.getInstructionList().getStart();
-              instructionHandle != null;
-              instructionHandle = instructionHandle.getNext()) {
-            Instruction anInstruction = instructionHandle.getInstruction();
-
-            if (anInstruction instanceof INVOKEVIRTUAL) {
-              //              System.out.println(
-              //                  "  3) INVOKEVIRTUAL\t"
-              //                      + ((INVOKEVIRTUAL) anInstruction).getReferenceType(constantPoolGen)
-              //                      + " :: "
-              //                      + ((INVOKEVIRTUAL) anInstruction).getMethodName(constantPoolGen)
-              //                      + "()");
-              //              anInstruction.accept(this);
-            } else if (anInstruction instanceof ConstantPushInstruction) {
-              System.out.println(
-                  "(unhandled) Main.MyClassVisitor.MyMethodVisitor.visitMethod() ConstantPushInstruction = "
-                      + ((ConstantPushInstruction) anInstruction).getValue());
-            } else if (anInstruction instanceof ACONST_NULL) {
-              System.out.println(
-                  "(unhandled) Main.MyClassVisitor.MyMethodVisitor.visitMethod() " + anInstruction);
-              //              anInstruction.accept(this);
-
-            } else if (anInstruction instanceof RETURN) {
-              //((RETURN)anInstruction).
-              System.out.println(
-                  "(unhandled) Main.MyClassVisitor.MyMethodVisitor.visitMethod() " + anInstruction);
-              //              throw new RuntimeException("RETURN");
-            } else if (anInstruction instanceof PUTSTATIC) {
-              System.out.println(
-                  "(unhandled) Main.MyClassVisitor.MyMethodVisitor.visitMethod() " + anInstruction);
-              //  anInstruction.accept(this);
-            } else if (anInstruction instanceof IFNONNULL) {
-              System.out.println(
-                  "(unhandled) Main.MyClassVisitor.MyMethodVisitor.visitMethod() " + anInstruction);
-              //anInstruction.accept(this);
-            } else if (anInstruction instanceof GETSTATIC) {
-              System.out.println(
-                  "(unhandled) Main.MyClassVisitor.MyMethodVisitor.visitMethod() " + anInstruction);
-              //anInstruction.accept(this);
-            } else if (anInstruction instanceof ALOAD) {
-              int variableIndex = ((ALOAD) anInstruction).getIndex();
-              if (methodGen.getMethod().getLocalVariableTable() == null) {
-                System.err.println(
-                    "(unhandled) Main.MyClassVisitor.MyMethodVisitor.visitMethod() symbol table is null for "
-                        + methodGen.getMethod());
-              } else {
-                LocalVariable variable =
-                    methodGen
-                        .getMethod()
-                        .getLocalVariableTable()
-                        .getLocalVariable(variableIndex, 0);
-                String string = variable == null ? "null" : variable.getName();
-                stack.push(string);
-              }
-            } else if (anInstruction instanceof INVOKESPECIAL) {
-              // e.g. java.lang.Object :: <init>()
-              //              System.err.println(
-              //                  "  3) INVOKESPECIAL\t"
-              //                      + ((INVOKESPECIAL) anInstruction).getReferenceType(constantsPool)
-              //                      + " :: "
-              //                      + ((INVOKESPECIAL) anInstruction).getMethodName(constantsPool)
-              //                      + "()");
-            } else if (anInstruction instanceof PUTFIELD) {
-              PUTFIELD p = (PUTFIELD) anInstruction;
-              String fieldNameBeingAssigned = p.getName(constantPoolGen);
-              while (!stack.isEmpty()) {
-                System.out.println(
-                    "  3) " + fieldNameBeingAssigned + " --[depends on]--> " + stack.pop());
-              }
-            } else {
-              System.out.println(
-                  "(unhandled) Main.MyClassVisitor.MyMethodVisitor.visitMethod() " + anInstruction);
-              //              throw new RuntimeException(
-              //                  "Instruction to consider visiting: " + anInstruction.getClass());
-            }
-          }
-        }
-      }
-
-      //
-      // We don't need these methods, just cast the parameter in the caller to the INVOKE* type we want to examine.
-      //
-
-      /** instance method */
-      @Override
-      public void visitINVOKEVIRTUAL(INVOKEVIRTUAL iInstruction) {}
-
-      /** super method, private method, constructor */
-      @Override
-      public void visitINVOKESPECIAL(INVOKESPECIAL iInstruction) {}
-
-      @Override
-      public void visitINVOKEINTERFACE(INVOKEINTERFACE iInstruction) {}
-
-      @Override
-      public void visitINVOKESTATIC(INVOKESTATIC iInstruction) {}
-
-      @Override
-      public void visitRETURN(RETURN iInstruction) {
-        System.err.println("   4) " + iInstruction.getType(constantsPool));
-      }
-
-      @Override
-      public void start() {}
-    }
 
     private JavaClass classToVisit;
 
     public MyClassVisitor(JavaClass classToVisit) {
       super(classToVisit);
       this.classToVisit = classToVisit;
-      String className = classToVisit.getClassName();
-      ConstantPoolGen classConstants = new ConstantPoolGen(classToVisit.getConstantPool());
-      //System.out.println("Main.MyClassVisitor.enclosing_method()" + classToVisit);
-      for (Method method : classToVisit.getMethods()) {
-        MethodGen methodGen = new MethodGen(method, className, classConstants);
-        System.err.println("2) " + className + " :: " + method.getName() + "()");
-
-        MyMethodVisitor.visitMethod(methodGen, methodGen.getConstantPool());
-      }
     }
 
-    @Override
+    @Deprecated
     public void visitMethod(Method method) {
       String className = classToVisit.getClassName();
       ConstantPoolGen classConstants = new ConstantPoolGen(classToVisit.getConstantPool());
@@ -289,6 +162,88 @@ public class Main {
     public void visitField(Field field) {
       Type fieldType = field.getType();
       if (fieldType instanceof ObjectType) {}
+    }
+  }
+
+  static void visitMethod(MethodGen methodGen, ConstantPoolGen constantPoolGen) {
+    // main bit
+    if (methodGen.getInstructionList() != null) {
+
+      Stack<String> stack = new Stack<String>();
+      System.out.println("2) " + methodGen.getClassName() + " :: " + methodGen.getName());
+      for (InstructionHandle instructionHandle = methodGen.getInstructionList().getStart();
+          instructionHandle != null;
+          instructionHandle = instructionHandle.getNext()) {
+        Instruction anInstruction = instructionHandle.getInstruction();
+
+        if (anInstruction instanceof INVOKEVIRTUAL) {
+          //              System.out.println(
+          //                  "  3) INVOKEVIRTUAL\t"
+          //                      + ((INVOKEVIRTUAL) anInstruction).getReferenceType(constantPoolGen)
+          //                      + " :: "
+          //                      + ((INVOKEVIRTUAL) anInstruction).getMethodName(constantPoolGen)
+          //                      + "()");
+          //              anInstruction.accept(this);
+        } else if (anInstruction instanceof ConstantPushInstruction) {
+          System.out.println(
+              "(unhandled) Main.MyClassVisitor.MyMethodVisitor.visitMethod() ConstantPushInstruction = "
+                  + ((ConstantPushInstruction) anInstruction).getValue());
+        } else if (anInstruction instanceof ACONST_NULL) {
+          System.out.println(
+              "(unhandled) Main.MyClassVisitor.MyMethodVisitor.visitMethod() " + anInstruction);
+          //              anInstruction.accept(this);
+
+        } else if (anInstruction instanceof RETURN) {
+          //((RETURN)anInstruction).
+          System.out.println(
+              "(unhandled) Main.MyClassVisitor.MyMethodVisitor.visitMethod() " + anInstruction);
+          //              throw new RuntimeException("RETURN");
+        } else if (anInstruction instanceof PUTSTATIC) {
+          System.out.println(
+              "(unhandled) Main.MyClassVisitor.MyMethodVisitor.visitMethod() " + anInstruction);
+          //  anInstruction.accept(this);
+        } else if (anInstruction instanceof IFNONNULL) {
+          System.out.println(
+              "(unhandled) Main.MyClassVisitor.MyMethodVisitor.visitMethod() " + anInstruction);
+          //anInstruction.accept(this);
+        } else if (anInstruction instanceof GETSTATIC) {
+          System.out.println(
+              "(unhandled) Main.MyClassVisitor.MyMethodVisitor.visitMethod() " + anInstruction);
+          //anInstruction.accept(this);
+        } else if (anInstruction instanceof ALOAD) {
+          int variableIndex = ((ALOAD) anInstruction).getIndex();
+          if (methodGen.getMethod().getLocalVariableTable() == null) {
+            System.err.println(
+                "(unhandled) Main.MyClassVisitor.MyMethodVisitor.visitMethod() symbol table is null for "
+                    + methodGen.getMethod());
+          } else {
+            LocalVariable variable =
+                methodGen.getMethod().getLocalVariableTable().getLocalVariable(variableIndex, 0);
+            String string = variable == null ? "null" : variable.getName();
+            stack.push(string);
+          }
+        } else if (anInstruction instanceof INVOKESPECIAL) {
+          // e.g. java.lang.Object :: <init>()
+          //              System.err.println(
+          //                  "  3) INVOKESPECIAL\t"
+          //                      + ((INVOKESPECIAL) anInstruction).getReferenceType(constantsPool)
+          //                      + " :: "
+          //                      + ((INVOKESPECIAL) anInstruction).getMethodName(constantsPool)
+          //                      + "()");
+        } else if (anInstruction instanceof PUTFIELD) {
+          PUTFIELD p = (PUTFIELD) anInstruction;
+          String fieldNameBeingAssigned = p.getName(constantPoolGen);
+          while (!stack.isEmpty()) {
+            System.out.println(
+                "  3) " + fieldNameBeingAssigned + " --[depends on]--> " + stack.pop());
+          }
+        } else {
+          System.out.println(
+              "(unhandled) Main.MyClassVisitor.MyMethodVisitor.visitMethod() " + anInstruction);
+          //              throw new RuntimeException(
+          //                  "Instruction to consider visiting: " + anInstruction.getClass());
+        }
+      }
     }
   }
 }
