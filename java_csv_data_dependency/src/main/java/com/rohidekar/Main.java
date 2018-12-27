@@ -3,7 +3,6 @@ package com.rohidekar;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Paths;
@@ -27,15 +26,12 @@ import org.apache.bcel.generic.INVOKESPECIAL;
 import org.apache.bcel.generic.INVOKESTATIC;
 import org.apache.bcel.generic.INVOKEVIRTUAL;
 import org.apache.bcel.generic.Instruction;
-import org.apache.bcel.generic.InstructionConstants;
 import org.apache.bcel.generic.InstructionHandle;
 import org.apache.bcel.generic.MethodGen;
 import org.apache.bcel.generic.ObjectType;
 import org.apache.bcel.generic.PUTFIELD;
 import org.apache.bcel.generic.PUTSTATIC;
-import org.apache.bcel.generic.PushInstruction;
 import org.apache.bcel.generic.RETURN;
-import org.apache.bcel.generic.ReturnInstruction;
 import org.apache.bcel.generic.Type;
 
 import gr.gousiosg.javacg.stat.ClassVisitor;
@@ -140,12 +136,10 @@ public class Main {
 
     private static class MyMethodVisitor extends MethodVisitor {
       private final ConstantPoolGen constantsPool;
-      private final MethodGen methodGen;
 
       MyMethodVisitor(MethodGen methodGen, JavaClass javaClass) {
         super(methodGen, javaClass);
         this.constantsPool = methodGen.getConstantPool();
-        this.methodGen = methodGen;
 
         visitMethod(methodGen, constantsPool);
         // We can't figure out the superclass method of the parent method because we don't know which
@@ -194,7 +188,6 @@ public class Main {
                   "(unhandled) Main.MyClassVisitor.MyMethodVisitor.visitMethod() " + anInstruction);
               //anInstruction.accept(this);
             } else if (anInstruction instanceof ALOAD) {
-              ALOAD i = (ALOAD) anInstruction;
               int variableIndex = ((ALOAD) anInstruction).getIndex();
               if (methodGen.getMethod().getLocalVariableTable() == null) {
                 System.err.println(
@@ -233,24 +226,6 @@ public class Main {
             }
           }
         }
-      }
-
-      private int getTargetVariableIndex(ALOAD i) {
-        // TODO Auto-generated method stub
-        return 0;
-      }
-
-      private static boolean shouldVisitInstruction(Instruction iInstruction) {
-        if (InstructionConstants.INSTRUCTIONS[iInstruction.getOpcode()] == null) {
-          //          return false;
-        }
-        if ((iInstruction instanceof ConstantPushInstruction)) {
-          return false;
-        }
-        if (iInstruction instanceof ReturnInstruction) {
-          return false;
-        }
-        return true;
       }
 
       //
