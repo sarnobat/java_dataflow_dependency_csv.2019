@@ -134,6 +134,7 @@ public class Main {
    */
   private static class MyClassVisitor extends ClassVisitor {
 
+    @Deprecated
     private static class MyMethodVisitor extends MethodVisitor {
       private final ConstantPoolGen constantsPool;
 
@@ -147,7 +148,7 @@ public class Main {
         // TODO: Wait, we can use the repository to get the java class.
       }
 
-      private void visitMethod(MethodGen methodGen, ConstantPoolGen constantPoolGen) {
+      static void visitMethod(MethodGen methodGen, ConstantPoolGen constantPoolGen) {
         // main bit
         if (methodGen.getInstructionList() != null) {
 
@@ -159,13 +160,13 @@ public class Main {
             Instruction anInstruction = instructionHandle.getInstruction();
 
             if (anInstruction instanceof INVOKEVIRTUAL) {
-              System.out.println(
-                  "  3) INVOKEVIRTUAL\t"
-                      + ((INVOKEVIRTUAL) anInstruction).getReferenceType(constantPoolGen)
-                      + " :: "
-                      + ((INVOKEVIRTUAL) anInstruction).getMethodName(constantPoolGen)
-                      + "()");
-              anInstruction.accept(this);
+              //              System.out.println(
+              //                  "  3) INVOKEVIRTUAL\t"
+              //                      + ((INVOKEVIRTUAL) anInstruction).getReferenceType(constantPoolGen)
+              //                      + " :: "
+              //                      + ((INVOKEVIRTUAL) anInstruction).getMethodName(constantPoolGen)
+              //                      + "()");
+              //              anInstruction.accept(this);
             } else if (anInstruction instanceof ConstantPushInstruction) {
               System.out.println(
                   "(unhandled) Main.MyClassVisitor.MyMethodVisitor.visitMethod() ConstantPushInstruction = "
@@ -175,6 +176,11 @@ public class Main {
                   "(unhandled) Main.MyClassVisitor.MyMethodVisitor.visitMethod() " + anInstruction);
               //              anInstruction.accept(this);
 
+            } else if (anInstruction instanceof RETURN) {
+              //((RETURN)anInstruction).
+              System.out.println(
+                  "(unhandled) Main.MyClassVisitor.MyMethodVisitor.visitMethod() " + anInstruction);
+              //              throw new RuntimeException("RETURN");
             } else if (anInstruction instanceof PUTSTATIC) {
               System.out.println(
                   "(unhandled) Main.MyClassVisitor.MyMethodVisitor.visitMethod() " + anInstruction);
@@ -204,19 +210,18 @@ public class Main {
               }
             } else if (anInstruction instanceof INVOKESPECIAL) {
               // e.g. java.lang.Object :: <init>()
-              System.err.println(
-                  "  3) INVOKESPECIAL\t"
-                      + ((INVOKESPECIAL) anInstruction).getReferenceType(constantsPool)
-                      + " :: "
-                      + ((INVOKESPECIAL) anInstruction).getMethodName(constantsPool)
-                      + "()");
-            } else if (anInstruction instanceof RETURN) {
-              anInstruction.accept(this);
+              //              System.err.println(
+              //                  "  3) INVOKESPECIAL\t"
+              //                      + ((INVOKESPECIAL) anInstruction).getReferenceType(constantsPool)
+              //                      + " :: "
+              //                      + ((INVOKESPECIAL) anInstruction).getMethodName(constantsPool)
+              //                      + "()");
             } else if (anInstruction instanceof PUTFIELD) {
               PUTFIELD p = (PUTFIELD) anInstruction;
               String fieldNameBeingAssigned = p.getName(constantPoolGen);
               while (!stack.isEmpty()) {
-                System.out.println("  3) " + fieldNameBeingAssigned + " depends on " + stack.pop());
+                System.out.println(
+                    "  3) " + fieldNameBeingAssigned + " --[depends on]--> " + stack.pop());
               }
             } else {
               System.out.println(
@@ -248,7 +253,7 @@ public class Main {
 
       @Override
       public void visitRETURN(RETURN iInstruction) {
-        System.err.println("  4) " + iInstruction.getType(constantsPool));
+        System.err.println("   4) " + iInstruction.getType(constantsPool));
       }
 
       @Override
@@ -260,7 +265,15 @@ public class Main {
     public MyClassVisitor(JavaClass classToVisit) {
       super(classToVisit);
       this.classToVisit = classToVisit;
+      String className = classToVisit.getClassName();
+      ConstantPoolGen classConstants = new ConstantPoolGen(classToVisit.getConstantPool());
       //System.out.println("Main.MyClassVisitor.enclosing_method()" + classToVisit);
+      for (Method method : classToVisit.getMethods()) {
+        MethodGen methodGen = new MethodGen(method, className, classConstants);
+        System.err.println("2) " + className + " :: " + method.getName() + "()");
+
+        MyMethodVisitor.visitMethod(methodGen, methodGen.getConstantPool());
+      }
     }
 
     @Override
@@ -269,7 +282,7 @@ public class Main {
       ConstantPoolGen classConstants = new ConstantPoolGen(classToVisit.getConstantPool());
       MethodGen methodGen = new MethodGen(method, className, classConstants);
       System.err.println("2) " + className + " :: " + method.getName() + "()");
-      new MyMethodVisitor(methodGen, classToVisit).start();
+      //new MyMethodVisitor(methodGen, classToVisit).start();
     }
 
     @Override
