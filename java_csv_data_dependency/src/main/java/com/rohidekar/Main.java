@@ -160,7 +160,7 @@ public class Main {
 
             if (anInstruction instanceof INVOKEVIRTUAL) {
               System.out.println(
-                  " 3) INVOKEVIRTUAL\t"
+                  "  3) INVOKEVIRTUAL\t"
                       + ((INVOKEVIRTUAL) anInstruction).getReferenceType(constantPoolGen)
                       + " :: "
                       + ((INVOKEVIRTUAL) anInstruction).getMethodName(constantPoolGen)
