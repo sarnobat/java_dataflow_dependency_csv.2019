@@ -113,7 +113,7 @@ public class Main {
         System.err.println("1) " + javaClass.getClassName());
         // Methods
         for (Method method : javaClass.getMethods()) {
-        	System.err.println( ); 
+          System.err.println();
           ConstantPoolGen cpg = new ConstantPoolGen(javaClass.getConstantPool());
           MethodGen methodGen = new MethodGen(method, javaClass.getClassName(), cpg);
           LocalVariableTable symbolTable = methodGen.getMethod().getLocalVariableTable();
@@ -153,6 +153,7 @@ public class Main {
                         + "()\treturn "
                         + ((ARETURN) anInstruction).toString(javaClass.getConstantPool())
                         + ";\tARETURN reference (return a reference from a method) ");
+                System.err.println();
               } else if (anInstruction instanceof DUP) {
                 System.err.println(
                     "  (unhandled) "
@@ -172,6 +173,7 @@ public class Main {
                         + "()\t... = "
                         + ((GETSTATIC) anInstruction).getFieldName(cpg)
                         + ";\tGETSTATIC\t(get a static field value of a class, where the field is identified by field reference in the constant pool index): ");
+                stack.push(((GETSTATIC) anInstruction).getFieldName(cpg));
               } else if (anInstruction instanceof NEW) {
                 System.err.println(
                     "  (unhandled) "
@@ -190,6 +192,8 @@ public class Main {
                         + "()\t"
                         + ((PUTSTATIC) anInstruction).getFieldName(cpg)
                         + " = ...;\tPUTSTATIC\t(set static field to value in a class, where the field is identified by a field reference index in constant pool): ");
+                //stack.pop();
+                System.err.println();
               } else if (anInstruction instanceof RETURN) {
                 System.err.println(
                     "  (unhandled) "
