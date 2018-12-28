@@ -113,6 +113,7 @@ public class Main {
         System.err.println("1) " + javaClass.getClassName());
         // Methods
         for (Method method : javaClass.getMethods()) {
+        	System.err.println( ); 
           ConstantPoolGen cpg = new ConstantPoolGen(javaClass.getConstantPool());
           MethodGen methodGen = new MethodGen(method, javaClass.getClassName(), cpg);
           LocalVariableTable symbolTable = methodGen.getMethod().getLocalVariableTable();
@@ -127,20 +128,13 @@ public class Main {
               Instruction anInstruction = instructionHandle.getInstruction();
 
               if (anInstruction instanceof INVOKEVIRTUAL) {
-                //              System.out.println(
-                //                  "  3) INVOKEVIRTUAL\t"
-                //                      + ((INVOKEVIRTUAL) anInstruction).getReferenceType(constantPoolGen)
-                //                      + " :: "
-                //                      + ((INVOKEVIRTUAL) anInstruction).getMethodName(constantPoolGen)
-                //                      + "()");
-                //              anInstruction.accept(this);
               } else if (anInstruction instanceof ConstantPushInstruction) {
                 System.out.println(
                     "  (unhandled) "
                         + javaClass.getClassName()
                         + "::"
                         + method.getName()
-                        + " ConstantPushInstruction = "
+                        + "()\tConstantPushInstruction = "
                         + ((ConstantPushInstruction) anInstruction).getValue());
               } else if (anInstruction instanceof ACONST_NULL) {
                 System.out.println(
@@ -148,43 +142,7 @@ public class Main {
                         + javaClass.getClassName()
                         + "::"
                         + method.getName()
-                        + " "
-                        + anInstruction);
-                //              anInstruction.accept(this);
-
-              } else if (anInstruction instanceof DUP) {
-                System.err.println(
-                    "  (unhandled) "
-                        + javaClass.getClassName()
-                        + "::"
-                        + method.getName()
-                        + "() DUP (duplicate the value on top of the stack) "
-                        + stack.peek());
-                stack.push(stack.peek());
-              } else if (anInstruction instanceof GETSTATIC) {
-                System.out.println(
-                    "  (unhandled) "
-                        + javaClass.getClassName()
-                        + "::"
-                        + method.getName()
-                        + "() GETSTATIC (get a static field value of a class, where the field is identified by field reference in the constant pool index): "
-                        + ((GETSTATIC) anInstruction).getFieldName(cpg));
-                //anInstruction.accept(this);
-              } else if (anInstruction instanceof PUTSTATIC) {
-                System.out.println(
-                    "  (unhandled) "
-                        + javaClass.getClassName()
-                        + "::"
-                        + method.getName()
-                        + "() PUTSTATIC (set static field to value in a class, where the field is identified by a field reference index in constant pool): "
-                        + ((PUTSTATIC) anInstruction).getFieldName(cpg));
-              } else if (anInstruction instanceof NEW) {
-                System.err.println(
-                    "  (unhandled) "
-                        + javaClass.getClassName()
-                        + "::"
-                        + method.getName()
-                        + "() NEW (create new object of type identified by class reference in constant pool index) "
+                        + "()\t"
                         + anInstruction);
               } else if (anInstruction instanceof ARETURN) {
                 System.err.println(
@@ -192,40 +150,68 @@ public class Main {
                         + javaClass.getClassName()
                         + "::"
                         + method.getName()
-                        + "() ARETURN reference - "
-                        + anInstruction);
+                        + "()\treturn "
+                        + ((ARETURN) anInstruction).toString(javaClass.getConstantPool())
+                        + ";\tARETURN reference (return a reference from a method) ");
+              } else if (anInstruction instanceof DUP) {
                 System.err.println(
                     "  (unhandled) "
                         + javaClass.getClassName()
                         + "::"
                         + method.getName()
-                        + "() ARETURN reference - "
-                        + ((ARETURN) anInstruction).toString(javaClass.getConstantPool()));
+                        + "()\t"
+                        + stack.peek()
+                        + "\tDUP\t(duplicate the value on top of the stack) ");
+                stack.push(stack.peek());
+              } else if (anInstruction instanceof GETSTATIC) {
+                System.out.println(
+                    "  (unhandled) "
+                        + javaClass.getClassName()
+                        + "::"
+                        + method.getName()
+                        + "()\t... = "
+                        + ((GETSTATIC) anInstruction).getFieldName(cpg)
+                        + ";\tGETSTATIC\t(get a static field value of a class, where the field is identified by field reference in the constant pool index): ");
+              } else if (anInstruction instanceof NEW) {
+                System.err.println(
+                    "  (unhandled) "
+                        + javaClass.getClassName()
+                        + "::"
+                        + method.getName()
+                        + "()\tnew "
+                        + ((NEW) anInstruction).getType(cpg)
+                        + "();\tNEW\t(create new object of type identified by class reference in constant pool index) ");
+              } else if (anInstruction instanceof PUTSTATIC) {
+                System.out.println(
+                    "  (unhandled) "
+                        + javaClass.getClassName()
+                        + "::"
+                        + method.getName()
+                        + "()\t"
+                        + ((PUTSTATIC) anInstruction).getFieldName(cpg)
+                        + " = ...;\tPUTSTATIC\t(set static field to value in a class, where the field is identified by a field reference index in constant pool): ");
               } else if (anInstruction instanceof RETURN) {
                 System.err.println(
                     "  (unhandled) "
                         + javaClass.getClassName()
                         + "::"
                         + method.getName()
-                        + "() RETURN void - "
-                        + anInstruction);
+                        + "()\treturn;\tRETURN\t(return void from method)");
               } else if (anInstruction instanceof IFNONNULL) {
                 System.out.println(
                     "  (unhandled) "
                         + javaClass.getClassName()
                         + "::"
                         + method.getName()
-                        + "() "
+                        + "()\t"
                         + anInstruction);
-                //anInstruction.accept(this);
               } else if (anInstruction instanceof GOTO) {
-
                 System.out.println(
                     "  (unhandled) "
                         + javaClass.getClassName()
                         + "::"
                         + method.getName()
-                        + " GOTO (goes to another instruction at branchoffset): "
+                        + "()\tGOTO (goes to another instruction at branchoffset): "
                         + anInstruction);
               } else if (anInstruction instanceof ALOAD) {
                 int variableIndex = ((ALOAD) anInstruction).getIndex();
@@ -235,7 +221,7 @@ public class Main {
                           + javaClass.getClassName()
                           + "::"
                           + method.getName()
-                          + " symbol table is null for "
+                          + "()\tsymbol table is null for "
                           + methodGen.getMethod());
                 } else {
                   LocalVariable variable =
