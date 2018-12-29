@@ -26,6 +26,7 @@ import org.apache.bcel.generic.ConstantPushInstruction;
 import org.apache.bcel.generic.DUP;
 import org.apache.bcel.generic.GETSTATIC;
 import org.apache.bcel.generic.GOTO;
+import org.apache.bcel.generic.ICONST;
 import org.apache.bcel.generic.IFNONNULL;
 import org.apache.bcel.generic.INVOKESPECIAL;
 import org.apache.bcel.generic.INVOKESTATIC;
@@ -108,16 +109,21 @@ public class Main {
         }
       }
 
-      // Visit each class
       for (JavaClass javaClass : javaClasses) {
         System.err.println("1) " + javaClass.getClassName());
-        // Methods
         for (Method method : javaClass.getMethods()) {
           System.err.println();
           ConstantPoolGen cpg = new ConstantPoolGen(javaClass.getConstantPool());
           MethodGen methodGen = new MethodGen(method, javaClass.getClassName(), cpg);
           LocalVariableTable symbolTable = methodGen.getMethod().getLocalVariableTable();
-          System.err.println("2) " + javaClass.getClassName() + " :: " + method.getName() + "()");
+          System.out.println(
+              "2) "
+                  + javaClass.getClassName()
+                  + " :: "
+                  + method.getName()
+                  + "() - "
+                  + methodGen.getInstructionList().size()
+                  + " instructions");
           // main bit
           if (methodGen.getInstructionList() != null) {
 
@@ -128,6 +134,20 @@ public class Main {
               Instruction anInstruction = instructionHandle.getInstruction();
 
               if (anInstruction instanceof INVOKEVIRTUAL) {
+                System.err.println(
+                    "  (unhandled) INVOKEVIRTUAL "
+                        + ((INVOKEVIRTUAL) anInstruction).getClassName(cpg)
+                        + "::"
+                        + ((INVOKEVIRTUAL) anInstruction).getMethodName(cpg)
+                        + "()");
+
+                int argCount = ((INVOKEVIRTUAL) anInstruction).getArgumentTypes(cpg).length;
+                while (argCount > -1) {
+                  --argCount;
+                  String paramName = stack.pop();
+                  System.out.println("Main.main() paramName = " + paramName);
+                }
+                stack.push("ret");
               } else if (anInstruction instanceof ConstantPushInstruction) {
                 System.out.println(
                     "  (unhandled) "
@@ -136,6 +156,8 @@ public class Main {
                         + method.getName()
                         + "()\tConstantPushInstruction = "
                         + ((ConstantPushInstruction) anInstruction).getValue());
+              } else if (anInstruction instanceof ICONST) {
+                throw new RuntimeException();
               } else if (anInstruction instanceof ACONST_NULL) {
                 System.out.println(
                     "  (unhandled) "
@@ -144,6 +166,7 @@ public class Main {
                         + method.getName()
                         + "()\t"
                         + anInstruction);
+                stack.push("null");
               } else if (anInstruction instanceof ARETURN) {
                 System.err.println(
                     "  (unhandled) "
@@ -173,7 +196,7 @@ public class Main {
                         + "()\t... = "
                         + ((GETSTATIC) anInstruction).getFieldName(cpg)
                         + ";\tGETSTATIC\t(get a static field value of a class, where the field is identified by field reference in the constant pool index): ");
-                stack.push(((GETSTATIC) anInstruction).getFieldName(cpg));
+                stack.push(((GETSTATIC) anInstruction).getFieldName(cpg)); // confirmed
               } else if (anInstruction instanceof NEW) {
                 System.err.println(
                     "  (unhandled) "
@@ -184,7 +207,7 @@ public class Main {
                         + ((NEW) anInstruction).getType(cpg)
                         + "();\tNEW\t(create new object of type identified by class reference in constant pool index) ");
               } else if (anInstruction instanceof PUTSTATIC) {
-                System.out.println(
+                System.err.println(
                     "  (unhandled) "
                         + javaClass.getClassName()
                         + "::"
@@ -192,7 +215,7 @@ public class Main {
                         + "()\t"
                         + ((PUTSTATIC) anInstruction).getFieldName(cpg)
                         + " = ...;\tPUTSTATIC\t(set static field to value in a class, where the field is identified by a field reference index in constant pool): ");
-                //stack.pop();
+                stack.pop(); //confirmed
                 System.err.println();
               } else if (anInstruction instanceof RETURN) {
                 System.err.println(
@@ -210,7 +233,7 @@ public class Main {
                         + "()\t"
                         + anInstruction);
               } else if (anInstruction instanceof GOTO) {
-                System.out.println(
+                System.err.println(
                     "  (unhandled) "
                         + javaClass.getClassName()
                         + "::"
@@ -235,6 +258,7 @@ public class Main {
                           .getLocalVariable(variableIndex, 0);
                   String string = variable == null ? "null" : variable.getName();
                   stack.push(string);
+                  System.err.println("Main.main() just pushed onto stack: " + string);
                 }
               } else if (anInstruction instanceof ASTORE) {
 
@@ -253,19 +277,32 @@ public class Main {
                           .getLocalVariableTable()
                           .getLocalVariable(((ASTORE) anInstruction).getIndex())
                           .getName();
-                  System.out.println(
+                  System.err.println(
                       "Main.main() ASTORE (store a reference into a local variable #index): Declared and assigned variable:  "
                           + variableName);
+                  stack.pop();
                 }
               } else if (anInstruction instanceof INVOKESTATIC) {
-                System.out.println(
+                System.err.println(
                     "  (unhandled) "
                         + javaClass.getClassName()
                         + "::"
                         + method.getName()
+                        + "()\t--[calls]-->\t"
+                        + ((INVOKESTATIC) anInstruction).getClassName(cpg)
+                        + "::"
+                        + ((INVOKESTATIC) anInstruction).getMethodName(cpg)
                         + "() "
-                        + anInstruction
+                        //+ anInstruction
                         + " INVOKESTATIC (invoke a static method and puts the result on the stack (might be void); the method is identified by method reference index in constant pool): ");
+                int length = ((INVOKESTATIC) anInstruction).getArgumentTypes(cpg).length;
+                // TODO: I'm not sure we should be popping EVERYTHING off the stack shoudl we? Or maybe we should. To be determined.
+                while (length > 0) {
+                  String paramValue = stack.pop();
+                  System.err.println("Main.main() paramValue = " + paramValue);
+                  --length;
+                }
+                stack.push("ret");
               } else if (anInstruction instanceof INVOKESPECIAL) {
               } else if (anInstruction instanceof LDC) {
                 stack.push(((LDC) anInstruction).getValue(cpg).toString());
@@ -274,7 +311,7 @@ public class Main {
                 String fieldNameBeingAssigned = p.getName(methodGen.getConstantPool());
                 while (!stack.isEmpty()) {
                   System.out.println(
-                      "  3) " + fieldNameBeingAssigned + "\t--[depends on]--> " + stack.pop());
+                      "  3) " + fieldNameBeingAssigned + "\t--[assignment]--> " + stack.pop());
                 }
               } else {
                 System.out.println(
