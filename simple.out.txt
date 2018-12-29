@@ -1,0 +1,26 @@
+Main.main() No args, will try reading from stdin only
+1) com.rohidekar.Simple
+
+2) com.rohidekar.Simple :: <init>() - 3 instructions
+    stack size: 0	ALOAD	[]
+Main.main() just pushed onto stack (0): this
+    stack size: 1	INVOKESPECIAL	[this]
+  (unhandled) INVOKESPECIAL com.rohidekar.Simple::<init>()	--[calls]-->	java.lang.Object::<init>() 
+Main.main() popped instance reference	this
+    stack size: 1	RETURN	[ret_Object_<init>]
+  (unhandled) com.rohidekar.Simple::<init>()	return;	RETURN	(return void from method)
+
+2) com.rohidekar.Simple :: main() - 4 instructions
+    stack size: 0	LDC	[]
+
+    stack size: 1	LDC	[foo]
+
+    stack size: 2	INVOKESTATIC	[foo, bar]
+  (unhandled) com.rohidekar.Simple::main()	--[calls]-->	com.rohidekar.Simple::voidMethod()  INVOKESTATIC (invoke a static method and puts the result on the stack (might be void); the method is identified by method reference index in constant pool): 
+    stack size: 1	RETURN	[ret_Simple_voidMethod]
+  (unhandled) com.rohidekar.Simple::main()	return;	RETURN	(return void from method)
+
+2) com.rohidekar.Simple :: voidMethod() - 1 instructions
+    stack size: 0	RETURN	[]
+  (unhandled) com.rohidekar.Simple::voidMethod()	return;	RETURN	(return void from method)
+Now use d3_helloworld_csv.git/singlefile_automated/ for visualization
