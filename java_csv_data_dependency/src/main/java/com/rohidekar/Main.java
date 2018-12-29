@@ -11,38 +11,40 @@ import java.util.LinkedList;
 import java.util.Stack;
 
 import org.apache.bcel.classfile.ClassParser;
-import org.apache.bcel.classfile.Constant;
 import org.apache.bcel.classfile.Field;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.LocalVariable;
 import org.apache.bcel.classfile.LocalVariableTable;
 import org.apache.bcel.classfile.Method;
+import org.apache.bcel.generic.AALOAD;
 import org.apache.bcel.generic.ACONST_NULL;
 import org.apache.bcel.generic.ALOAD;
 import org.apache.bcel.generic.ARETURN;
-import org.apache.bcel.generic.ASTORE;
+import org.apache.bcel.generic.*;
+import org.apache.bcel.generic.CHECKCAST;
 import org.apache.bcel.generic.ConstantPoolGen;
 import org.apache.bcel.generic.ConstantPushInstruction;
 import org.apache.bcel.generic.DUP;
 import org.apache.bcel.generic.GETSTATIC;
 import org.apache.bcel.generic.GOTO;
 import org.apache.bcel.generic.ICONST;
+import org.apache.bcel.generic.IFEQ;
+import org.apache.bcel.generic.IFNE;
 import org.apache.bcel.generic.IFNONNULL;
+import org.apache.bcel.generic.ILOAD;
+import org.apache.bcel.generic.INVOKEINTERFACE;
 import org.apache.bcel.generic.INVOKESPECIAL;
 import org.apache.bcel.generic.INVOKESTATIC;
 import org.apache.bcel.generic.INVOKEVIRTUAL;
+import org.apache.bcel.generic.ISTORE;
 import org.apache.bcel.generic.Instruction;
 import org.apache.bcel.generic.InstructionHandle;
 import org.apache.bcel.generic.LDC;
 import org.apache.bcel.generic.MethodGen;
 import org.apache.bcel.generic.NEW;
-import org.apache.bcel.generic.ObjectType;
 import org.apache.bcel.generic.PUTFIELD;
 import org.apache.bcel.generic.PUTSTATIC;
 import org.apache.bcel.generic.RETURN;
-import org.apache.bcel.generic.Type;
-
-import gr.gousiosg.javacg.stat.ClassVisitor;
 
 /**
  * 2018-12
@@ -133,7 +135,43 @@ public class Main {
                 instructionHandle = instructionHandle.getNext()) {
               Instruction anInstruction = instructionHandle.getInstruction();
 
-              if (anInstruction instanceof INVOKEVIRTUAL) {
+              if (anInstruction instanceof AASTORE) {
+                System.out.println("(unhandled) AASTORE");
+              } else if (anInstruction instanceof ATHROW) {
+                System.out.println("(unhandled) ATHROW");
+              } else if (anInstruction instanceof GETFIELD) {
+                System.out.println("(unhandled) GETFIELD");
+              } else if (anInstruction instanceof CHECKCAST) {
+                System.out.println("(unhandled) CHECKCAST");
+              } else if (anInstruction instanceof IF_ICMPNE) {
+                System.out.println("(unhandled) IF_ICMPNE");
+              } else if (anInstruction instanceof IF_ICMPLT) {
+                System.out.println("(unhandled) IF_ICMPLT");
+              } else if (anInstruction instanceof POP) {
+                System.out.println("(unhandled) POP");
+                stack.pop();
+              } else if (anInstruction instanceof POP2) {
+                System.out.println("(unhandled) POP2");
+                stack.pop();
+              } else if (anInstruction instanceof IFNE) {
+                System.out.println("(unhandled) IFNE");
+              } else if (anInstruction instanceof IFNULL) {
+                System.out.println("(unhandled) IFNULL");
+              } else if (anInstruction instanceof IFEQ) {
+                System.out.println("(unhandled) IFEQ");
+              } else if (anInstruction instanceof IINC) {
+                System.out.println("(unhandled) IINC");
+              } else if (anInstruction instanceof INVOKEINTERFACE) {
+                System.out.println("(unhandled) INVOKEINTERFACE");
+              } else if (anInstruction instanceof ISTORE) {
+                System.out.println("(unhandled) ISTORE");
+              } else if (anInstruction instanceof ILOAD) {
+                System.out.println("(unhandled) ILOAD");
+              } else if (anInstruction instanceof AALOAD) {
+                System.out.println("(unhandled) AALOAD");
+              } else if (anInstruction instanceof ARRAYLENGTH) {
+                System.out.println("(unhandled) ARRAYLENGTH");
+              } else if (anInstruction instanceof INVOKEVIRTUAL) {
                 System.err.println(
                     "  (unhandled) INVOKEVIRTUAL "
                         + ((INVOKEVIRTUAL) anInstruction).getClassName(cpg)
@@ -177,6 +215,17 @@ public class Main {
                         + ((ARETURN) anInstruction).toString(javaClass.getConstantPool())
                         + ";\tARETURN reference (return a reference from a method) ");
                 System.err.println();
+              } else if (anInstruction instanceof IRETURN) {
+                System.err.println(
+                    "  (unhandled) "
+                        + javaClass.getClassName()
+                        + "::"
+                        + method.getName()
+                        + "()\treturn "
+                        + ((IRETURN) anInstruction).toString(javaClass.getConstantPool())
+                        + ";\tARETURN reference (return a reference from a method) ");
+                stack.pop();
+                System.err.println();
               } else if (anInstruction instanceof DUP) {
                 System.err.println(
                     "  (unhandled) "
@@ -206,6 +255,17 @@ public class Main {
                         + "()\tnew "
                         + ((NEW) anInstruction).getType(cpg)
                         + "();\tNEW\t(create new object of type identified by class reference in constant pool index) ");
+                stack.push("new_object");
+              } else if (anInstruction instanceof ANEWARRAY) {
+                System.err.println(
+                    "  (unhandled) "
+                        + javaClass.getClassName()
+                        + "::"
+                        + method.getName()
+                        + "()\tnew "
+                        + ((ANEWARRAY) anInstruction).getType(cpg)
+                        + "();\tANEWARRAY\t(create new object of type identified by class reference in constant pool index) ");
+                stack.push("new_array");
               } else if (anInstruction instanceof PUTSTATIC) {
                 System.err.println(
                     "  (unhandled) "
@@ -224,6 +284,7 @@ public class Main {
                         + "::"
                         + method.getName()
                         + "()\treturn;\tRETURN\t(return void from method)");
+                // No stack pop for returning from a void method
               } else if (anInstruction instanceof IFNONNULL) {
                 System.out.println(
                     "  (unhandled) "
@@ -322,7 +383,8 @@ public class Main {
                         + "() "
                         + anInstruction);
                 throw new RuntimeException(
-                    "Instruction to consider visiting: " + anInstruction.getClass());
+                    "Instruction to consider visiting: "
+                        + anInstruction.getClass().getSimpleName());
               }
             }
           }
