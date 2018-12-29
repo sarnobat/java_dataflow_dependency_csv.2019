@@ -16,35 +16,7 @@ import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.classfile.LocalVariable;
 import org.apache.bcel.classfile.LocalVariableTable;
 import org.apache.bcel.classfile.Method;
-import org.apache.bcel.generic.AALOAD;
-import org.apache.bcel.generic.ACONST_NULL;
-import org.apache.bcel.generic.ALOAD;
-import org.apache.bcel.generic.ARETURN;
 import org.apache.bcel.generic.*;
-import org.apache.bcel.generic.CHECKCAST;
-import org.apache.bcel.generic.ConstantPoolGen;
-import org.apache.bcel.generic.ConstantPushInstruction;
-import org.apache.bcel.generic.DUP;
-import org.apache.bcel.generic.GETSTATIC;
-import org.apache.bcel.generic.GOTO;
-import org.apache.bcel.generic.ICONST;
-import org.apache.bcel.generic.IFEQ;
-import org.apache.bcel.generic.IFNE;
-import org.apache.bcel.generic.IFNONNULL;
-import org.apache.bcel.generic.ILOAD;
-import org.apache.bcel.generic.INVOKEINTERFACE;
-import org.apache.bcel.generic.INVOKESPECIAL;
-import org.apache.bcel.generic.INVOKESTATIC;
-import org.apache.bcel.generic.INVOKEVIRTUAL;
-import org.apache.bcel.generic.ISTORE;
-import org.apache.bcel.generic.Instruction;
-import org.apache.bcel.generic.InstructionHandle;
-import org.apache.bcel.generic.LDC;
-import org.apache.bcel.generic.MethodGen;
-import org.apache.bcel.generic.NEW;
-import org.apache.bcel.generic.PUTFIELD;
-import org.apache.bcel.generic.PUTSTATIC;
-import org.apache.bcel.generic.RETURN;
 
 /**
  * 2018-12
@@ -118,7 +90,7 @@ public class Main {
           ConstantPoolGen cpg = new ConstantPoolGen(javaClass.getConstantPool());
           MethodGen methodGen = new MethodGen(method, javaClass.getClassName(), cpg);
           LocalVariableTable symbolTable = methodGen.getMethod().getLocalVariableTable();
-          System.out.println(
+          System.err.println(
               "2) "
                   + javaClass.getClassName()
                   + " :: "
@@ -134,83 +106,105 @@ public class Main {
                 instructionHandle != null;
                 instructionHandle = instructionHandle.getNext()) {
               Instruction anInstruction = instructionHandle.getInstruction();
-
+              System.err.println(
+                  "    stack size: "
+                      + stack.size()
+                      + "\t"
+                      + anInstruction.getClass().getSimpleName()
+                      + "\t"
+                      + stack);
               if (anInstruction instanceof AASTORE) {
-                System.out.println(" (unhandled) AASTORE");
+                System.err.println(" (unhandled) AASTORE");
                 stack.pop();
                 stack.pop();
                 stack.pop();
               } else if (anInstruction instanceof ATHROW) {
-                System.out.println("  (unhandled) ATHROW");
+                System.err.println("  (unhandled) ATHROW");
               } else if (anInstruction instanceof GETFIELD) {
-                System.out.println("  (unhandled) GETFIELD");
+                System.err.println("  (unhandled) GETFIELD");
               } else if (anInstruction instanceof CHECKCAST) {
-                System.out.println("  (unhandled) CHECKCAST");
+                System.err.println("  (unhandled) CHECKCAST");
               } else if (anInstruction instanceof IF_ICMPNE) {
-                  System.out.println("  (unhandled) IF_ICMPNE");
+                System.err.println("  (unhandled) IF_ICMPNE");
               } else if (anInstruction instanceof IFLE) {
-                  System.out.println("  (unhandled) IFLE");
+                System.err.println("  (unhandled) IFLE");
               } else if (anInstruction instanceof IADD) {
-                  System.out.println("  (unhandled) IADD");
-                  stack.pop();
-                  stack.pop();
-                  stack.push("ret_add");
+                System.err.println("  (unhandled) IADD");
+                stack.pop();
+                stack.pop();
+                stack.push("ret_add");
               } else if (anInstruction instanceof IF_ICMPLT) {
-                System.out.println("  (unhandled) IF_ICMPLT");
+                System.err.println("  (unhandled) IF_ICMPLT");
               } else if (anInstruction instanceof POP) {
-                System.out.println("  (unhandled) POP");
+                System.err.println("  (unhandled) POP");
                 stack.pop();
               } else if (anInstruction instanceof POP2) {
-                System.out.println("  (unhandled) POP2");
+                System.err.println("  (unhandled) POP2");
                 stack.pop();
               } else if (anInstruction instanceof IFNE) {
-                System.out.println("  (unhandled) IFNE");
+                System.err.println("  (unhandled) IFNE");
               } else if (anInstruction instanceof IFNULL) {
-                System.out.println("  (unhandled) IFNULL");
+                System.err.println("  (unhandled) IFNULL");
               } else if (anInstruction instanceof IFEQ) {
-                System.out.println("  (unhandled) IFEQ");
+                System.err.println("  (unhandled) IFEQ");
               } else if (anInstruction instanceof IINC) {
-                System.out.println("  (unhandled) IINC");
+                System.err.println("  (unhandled) IINC");
               } else if (anInstruction instanceof INVOKEINTERFACE) {
-                System.out.println("  (unhandled) INVOKEINTERFACE");
+                System.err.println("  (unhandled) INVOKEINTERFACE");
               } else if (anInstruction instanceof ISTORE) {
-                System.out.println("  (unhandled) ISTORE");
+                System.err.println("  (unhandled) ISTORE");
               } else if (anInstruction instanceof ILOAD) {
-                System.out.println("  (unhandled) ILOAD");
+                System.err.println("  (unhandled) ILOAD");
               } else if (anInstruction instanceof AALOAD) {
-                System.out.println("  (unhandled) AALOAD");
+                System.err.println("  (unhandled) AALOAD");
               } else if (anInstruction instanceof ARRAYLENGTH) {
-                System.out.println("  (unhandled) ARRAYLENGTH");
+                System.err.println("  (unhandled) ARRAYLENGTH");
               } else if (anInstruction instanceof INVOKEVIRTUAL) {
+                int argCount = ((INVOKEVIRTUAL) anInstruction).getArgumentTypes(cpg).length;
                 System.err.println(
                     "  (unhandled) INVOKEVIRTUAL "
                         + ((INVOKEVIRTUAL) anInstruction).getClassName(cpg)
                         + "::"
                         + ((INVOKEVIRTUAL) anInstruction).getMethodName(cpg)
-                        + "()");
+                        + "("
+                        + argCount
+                        + ")");
 
-                int argCount = ((INVOKEVIRTUAL) anInstruction).getArgumentTypes(cpg).length;
                 while (argCount > 0) {
                   --argCount;
                   String paramName = stack.pop();
-                  System.out.println("Main.main() paramName = " + paramName);
+                  System.err.println("Main.main() paramName = " + paramName);
                 }
-                stack.push("ret");
-              } else if (anInstruction instanceof ConstantPushInstruction) {
-                System.out.println(
+                stack.push("ret_invoke_virtual");
+              } else if (anInstruction instanceof ICONST) {
+                System.err.println(
                     "  (unhandled) "
                         + javaClass.getClassName()
                         + "::"
                         + method.getName()
-                        + "()\tConstantPushInstruction = "
-                        + anInstruction
-                        //+ ((ConstantPushInstruction) anInstruction).getValue()
-                        );
-                stack.push("constant");
-              } else if (anInstruction instanceof ICONST) {
-                throw new RuntimeException();
+                        + "()\tICONST = "
+                        + anInstruction);
+                stack.push("constant_" + ((ICONST) anInstruction).getValue());
+              } else if (anInstruction instanceof SIPUSH) {
+                  System.err.println(
+                          "  (unhandled) "
+                              + javaClass.getClassName()
+                              + "::"
+                              + method.getName()
+                              + "()\tSIPUSH = "
+                              + anInstruction);
+                  stack.push("constant_" + ((SIPUSH) anInstruction).getValue());
+              } else if (anInstruction instanceof BIPUSH) {
+                  System.err.println(
+                          "  (unhandled) "
+                              + javaClass.getClassName()
+                              + "::"
+                              + method.getName()
+                              + "()\tBIPUSH = "
+                              + anInstruction);
+                  stack.push("constant_" + ((BIPUSH) anInstruction).getValue());
               } else if (anInstruction instanceof ACONST_NULL) {
-                System.out.println(
+                System.err.println(
                     "  (unhandled) "
                         + javaClass.getClassName()
                         + "::"
@@ -228,6 +222,10 @@ public class Main {
                         + ((ARETURN) anInstruction).toString(javaClass.getConstantPool())
                         + ";\tARETURN reference (return a reference from a method) ");
                 System.err.println();
+                // I think unused return values from helper methods get left behind on the stack, so it won't be just the actual return value
+                if (stack.size() != 1) {
+                  //throw new RuntimeException(stack.toString());
+                }
               } else if (anInstruction instanceof IRETURN) {
                 System.err.println(
                     "  (unhandled) "
@@ -238,7 +236,10 @@ public class Main {
                         + ((IRETURN) anInstruction).toString(javaClass.getConstantPool())
                         + ";\tARETURN reference (return a reference from a method) ");
                 stack.pop();
-                System.err.println();
+                // I think unused return values from helper methods get left behind on the stack, so it won't be just the actual return value
+                if (stack.size() != 1) {
+                  //                  throw new RuntimeException();
+                }
               } else if (anInstruction instanceof DUP) {
                 System.err.println(
                     "  (unhandled) "
@@ -250,7 +251,7 @@ public class Main {
                         + "\tDUP\t(duplicate the value on top of the stack) ");
                 stack.push(stack.peek());
               } else if (anInstruction instanceof GETSTATIC) {
-                System.out.println(
+                System.err.println(
                     "  (unhandled) "
                         + javaClass.getClassName()
                         + "::"
@@ -268,7 +269,9 @@ public class Main {
                         + "()\tnew "
                         + ((NEW) anInstruction).getType(cpg)
                         + "();\tNEW\t(create new object of type identified by class reference in constant pool index) ");
-                stack.push("new_object");
+                String fullClassName = ((NEW) anInstruction).getType(cpg).toString();
+                stack.push(
+                    "new_object::" + fullClassName.substring(fullClassName.lastIndexOf('.') + 1));
               } else if (anInstruction instanceof ANEWARRAY) {
                 System.err.println(
                     "  (unhandled) "
@@ -299,13 +302,14 @@ public class Main {
                         + "()\treturn;\tRETURN\t(return void from method)");
                 // No stack pop for returning from a void method
               } else if (anInstruction instanceof IFNONNULL) {
-                System.out.println(
+                System.err.println(
                     "  (unhandled) "
                         + javaClass.getClassName()
                         + "::"
                         + method.getName()
                         + "()\t"
                         + anInstruction);
+                stack.pop();
               } else if (anInstruction instanceof GOTO) {
                 System.err.println(
                     "  (unhandled) "
@@ -333,10 +337,15 @@ public class Main {
                           .getLocalVariable(variableIndex, 0);
                   String string = variable == null ? "null" : variable.getName();
                   stack.push(string);
-                  System.err.println("Main.main() just pushed onto stack: " + string);
+                  System.err.println(
+                      "Main.main() just pushed onto stack (" + variableIndex + "): " + string);
                 }
               } else if (anInstruction instanceof ASTORE) {
 
+                if (stack.empty()) {
+                  throw new RuntimeException(
+                      "We can't be calling store if nothing was pushed onto the stack");
+                }
                 if (methodGen.getMethod().getLocalVariableTable() == null) {
                   System.err.println(
                       "  (unhandled) "
@@ -345,6 +354,7 @@ public class Main {
                           + method.getName()
                           + "() symbol table is null for "
                           + methodGen.getMethod());
+                  stack.pop();
                 } else {
                   String variableName =
                       methodGen
@@ -373,23 +383,54 @@ public class Main {
                 int length = ((INVOKESTATIC) anInstruction).getArgumentTypes(cpg).length;
                 // TODO: I'm not sure we should be popping EVERYTHING off the stack shoudl we? Or maybe we should. To be determined.
                 while (length > 0) {
-                  //String paramValue = stack.pop();
-//                  System.err.println("Main.main() paramValue = " + paramValue);
+                  String paramValue = stack.pop();
+                  //                  System.err.println("Main.main() paramValue = " + paramValue);
                   --length;
                 }
-                //stack.push("ret");
+                stack.push("ret_" + ((INVOKESTATIC) anInstruction).getMethodName(cpg));
               } else if (anInstruction instanceof INVOKESPECIAL) {
+                System.err.println(
+                    "  (unhandled) INVOKESPECIAL "
+                        + javaClass.getClassName()
+                        + "::"
+                        + method.getName()
+                        + "()\t--[calls]-->\t"
+                        + ((INVOKESPECIAL) anInstruction).getClassName(cpg)
+                        + "::"
+                        + ((INVOKESPECIAL) anInstruction).getMethodName(cpg)
+                        + "() ");
+
+                String paramValue1 = stack.pop();
+                System.err.println("Main.main() popped instance reference\t" + paramValue1);
+
+                int length = ((INVOKESPECIAL) anInstruction).getArgumentTypes(cpg).length;
+                while (length > 0) {
+                  String paramValue = stack.pop();
+                  System.err.println("Main.main() popping parameter\t\t" + paramValue);
+                  --length;
+                }
+
+                String className = ((INVOKESPECIAL) anInstruction).getClassName(cpg);
+                stack.push(
+                    "ret_"
+                        + className.substring(className.lastIndexOf('.') + 1)
+                        + "_"
+                        + ((INVOKESPECIAL) anInstruction).getMethodName(cpg));
               } else if (anInstruction instanceof LDC) {
                 stack.push(((LDC) anInstruction).getValue(cpg).toString());
+                System.err.println();
               } else if (anInstruction instanceof PUTFIELD) {
+                System.err.println();
                 PUTFIELD p = (PUTFIELD) anInstruction;
                 String fieldNameBeingAssigned = p.getName(methodGen.getConstantPool());
-                while (!stack.isEmpty()) {
-                  System.out.println(
-                      "  3) " + fieldNameBeingAssigned + "\t--[assignment]--> " + stack.pop());
-                }
+                stack.pop();
+                stack.pop();
+//                while (!stack.isEmpty()) {
+//                  System.err.println(
+//                      "  3) " + fieldNameBeingAssigned + "\t--[assignment]--> " + stack.pop());
+//                }
               } else {
-                System.out.println(
+                System.err.println(
                     "  (unhandled) "
                         + javaClass.getClassName()
                         + "::"
