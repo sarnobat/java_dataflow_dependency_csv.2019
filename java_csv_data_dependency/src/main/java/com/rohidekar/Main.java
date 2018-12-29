@@ -318,6 +318,7 @@ public class Main {
                         + method.getName()
                         + "()\treturn;\tRETURN\t(return void from method)");
                 // No stack pop for returning from a void method
+                // Actually, yes there is. I checked the stack. But should I do it here or leave it to the caller?
               } else if (anInstruction instanceof IFNONNULL) {
                 System.err.println(
                     "  (unhandled) "
