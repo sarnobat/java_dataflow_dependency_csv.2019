@@ -186,23 +186,23 @@ public class Main {
                         + anInstruction);
                 stack.push("constant_" + ((ICONST) anInstruction).getValue());
               } else if (anInstruction instanceof SIPUSH) {
-                  System.err.println(
-                          "  (unhandled) "
-                              + javaClass.getClassName()
-                              + "::"
-                              + method.getName()
-                              + "()\tSIPUSH = "
-                              + anInstruction);
-                  stack.push("constant_" + ((SIPUSH) anInstruction).getValue());
+                System.err.println(
+                    "  (unhandled) "
+                        + javaClass.getClassName()
+                        + "::"
+                        + method.getName()
+                        + "()\tSIPUSH = "
+                        + anInstruction);
+                stack.push("constant_" + ((SIPUSH) anInstruction).getValue());
               } else if (anInstruction instanceof BIPUSH) {
-                  System.err.println(
-                          "  (unhandled) "
-                              + javaClass.getClassName()
-                              + "::"
-                              + method.getName()
-                              + "()\tBIPUSH = "
-                              + anInstruction);
-                  stack.push("constant_" + ((BIPUSH) anInstruction).getValue());
+                System.err.println(
+                    "  (unhandled) "
+                        + javaClass.getClassName()
+                        + "::"
+                        + method.getName()
+                        + "()\tBIPUSH = "
+                        + anInstruction);
+                stack.push("constant_" + ((BIPUSH) anInstruction).getValue());
               } else if (anInstruction instanceof ACONST_NULL) {
                 System.err.println(
                     "  (unhandled) "
