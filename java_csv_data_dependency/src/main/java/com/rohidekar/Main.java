@@ -423,12 +423,9 @@ public class Main {
                 System.err.println();
                 PUTFIELD p = (PUTFIELD) anInstruction;
                 String fieldNameBeingAssigned = p.getName(methodGen.getConstantPool());
-                stack.pop();
-                stack.pop();
-//                while (!stack.isEmpty()) {
-//                  System.err.println(
-//                      "  3) " + fieldNameBeingAssigned + "\t--[assignment]--> " + stack.pop());
-//                }
+                // these may be the wrong way round
+                String objectRef = stack.pop();
+                String value = stack.pop();
               } else {
                 System.err.println(
                     "  (unhandled) "
