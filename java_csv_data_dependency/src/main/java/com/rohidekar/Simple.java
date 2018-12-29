@@ -11,6 +11,6 @@ public class Simple {
   }
 
   private static void voidMethod(String param1, String param2) {
-	  //System.out.println("Simple.voidMethod() " + param1);
+	  System.out.println("Simple.voidMethod() " + param1);
   }
 }
