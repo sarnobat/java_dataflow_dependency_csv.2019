@@ -130,9 +130,12 @@ public class Main {
                 System.err.println("  (unhandled) IFLE");
               } else if (anInstruction instanceof IADD) {
                 System.err.println("  (unhandled) IADD");
-                stack.pop();
-                stack.pop();
-                stack.push("ret_add");
+                String a1 = stack.pop();
+                String a3 = stack.pop();
+                String ret = "ret_add";
+                stack.push(ret);
+                System.out.println(ret + " --[depends on]--> " + a1);
+                System.out.println(ret + " --[depends on]--> " + a3);
               } else if (anInstruction instanceof IF_ICMPLT) {
                 System.err.println("  (unhandled) IF_ICMPLT");
               } else if (anInstruction instanceof POP) {
@@ -161,11 +164,13 @@ public class Main {
                 System.err.println("  (unhandled) ARRAYLENGTH");
               } else if (anInstruction instanceof INVOKEVIRTUAL) {
                 int argCount = ((INVOKEVIRTUAL) anInstruction).getArgumentTypes(cpg).length;
+                String className = ((INVOKEVIRTUAL) anInstruction).getClassName(cpg);
+                String methodName = ((INVOKEVIRTUAL) anInstruction).getMethodName(cpg);
                 System.err.println(
                     "  (unhandled) INVOKEVIRTUAL "
-                        + ((INVOKEVIRTUAL) anInstruction).getClassName(cpg)
+                        + className
                         + "::"
-                        + ((INVOKEVIRTUAL) anInstruction).getMethodName(cpg)
+                        + methodName
                         + "("
                         + argCount
                         + ")");
@@ -175,7 +180,11 @@ public class Main {
                   String paramName = stack.pop();
                   System.err.println("Main.main() paramName = " + paramName);
                 }
-                stack.push("ret_invoke_virtual");
+                stack.push(
+                    "ret_"
+                        + className.substring(className.lastIndexOf('.') + 1)
+                        + "_"
+                        + methodName);
               } else if (anInstruction instanceof ICONST) {
                 System.err.println(
                     "  (unhandled) "
@@ -259,7 +268,15 @@ public class Main {
                         + "()\t... = "
                         + ((GETSTATIC) anInstruction).getFieldName(cpg)
                         + ";\tGETSTATIC\t(get a static field value of a class, where the field is identified by field reference in the constant pool index): ");
-                stack.push(((GETSTATIC) anInstruction).getFieldName(cpg)); // confirmed
+                String fieldName = ((GETSTATIC) anInstruction).getFieldName(cpg);
+                String className = javaClass.getClassName();
+                stack.push(
+                    "getstatic_"
+                        + className.substring(className.lastIndexOf('.') + 1)
+                        + "_"
+                        + method.getName()
+                        + "_"
+                        + fieldName); // confirmed
               } else if (anInstruction instanceof NEW) {
                 System.err.println(
                     "  (unhandled) "
@@ -365,16 +382,26 @@ public class Main {
                   System.err.println(
                       "Main.main() ASTORE (store a reference into a local variable #index): Declared and assigned variable:  "
                           + variableName);
-                  stack.pop();
+                  String stackExpression = stack.pop();
+                  String className = javaClass.getClassName();
+                  System.out.println(
+                      className.substring(className.lastIndexOf('.') + 1)
+                          + "_"
+                          + method.getName()
+                          + "_"
+                          + variableName
+                          + "\t--[depends on variable]--> "
+                          + stackExpression);
                 }
               } else if (anInstruction instanceof INVOKESTATIC) {
+                String className = ((INVOKESTATIC) anInstruction).getClassName(cpg);
                 System.err.println(
                     "  (unhandled) "
                         + javaClass.getClassName()
                         + "::"
                         + method.getName()
                         + "()\t--[calls]-->\t"
-                        + ((INVOKESTATIC) anInstruction).getClassName(cpg)
+                        + className
                         + "::"
                         + ((INVOKESTATIC) anInstruction).getMethodName(cpg)
                         + "() "
@@ -387,7 +414,11 @@ public class Main {
                   //                  System.err.println("Main.main() paramValue = " + paramValue);
                   --length;
                 }
-                stack.push("ret_" + ((INVOKESTATIC) anInstruction).getMethodName(cpg));
+                stack.push(
+                    "ret_"
+                        + className.substring(className.lastIndexOf('.') + 1)
+                        + "_"
+                        + ((INVOKESTATIC) anInstruction).getMethodName(cpg));
               } else if (anInstruction instanceof INVOKESPECIAL) {
                 System.err.println(
                     "  (unhandled) INVOKESPECIAL "
