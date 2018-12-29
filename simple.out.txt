@@ -20,29 +20,7 @@ Main.main() popped instance reference	this
     stack size: 1	RETURN	[ret_Simple_voidMethod]
   (unhandled) com.rohidekar.Simple::main()	return;	RETURN	(return void from method)
 
-2) com.rohidekar.Simple :: voidMethod() - 10 instructions
-    stack size: 0	GETSTATIC	[]
-  (unhandled) com.rohidekar.Simple::voidMethod()	... = out;	GETSTATIC	(get a static field value of a class, where the field is identified by field reference in the constant pool index): 
-    stack size: 1	NEW	[getstatic_Simple_voidMethod_out]
-  (unhandled) com.rohidekar.Simple::voidMethod()	new java.lang.StringBuilder();	NEW	(create new object of type identified by class reference in constant pool index) 
-    stack size: 2	DUP	[getstatic_Simple_voidMethod_out, new_object::StringBuilder]
-  (unhandled) com.rohidekar.Simple::voidMethod()	new_object::StringBuilder	DUP	(duplicate the value on top of the stack) 
-    stack size: 3	LDC	[getstatic_Simple_voidMethod_out, new_object::StringBuilder, new_object::StringBuilder]
-
-    stack size: 4	INVOKESPECIAL	[getstatic_Simple_voidMethod_out, new_object::StringBuilder, new_object::StringBuilder, Simple.voidMethod() ]
-  (unhandled) INVOKESPECIAL com.rohidekar.Simple::voidMethod()	--[calls]-->	java.lang.StringBuilder::<init>() 
-Main.main() popped instance reference	Simple.voidMethod() 
-Main.main() popping parameter		new_object::StringBuilder
-    stack size: 3	ILOAD	[getstatic_Simple_voidMethod_out, new_object::StringBuilder, ret_StringBuilder_<init>]
-  (unhandled) ILOAD
-    stack size: 3	INVOKEVIRTUAL	[getstatic_Simple_voidMethod_out, new_object::StringBuilder, ret_StringBuilder_<init>]
-  (unhandled) INVOKEVIRTUAL java.lang.StringBuilder::append(1)
-Main.main() paramName = ret_StringBuilder_<init>
-    stack size: 3	INVOKEVIRTUAL	[getstatic_Simple_voidMethod_out, new_object::StringBuilder, ret_StringBuilder_append]
-  (unhandled) INVOKEVIRTUAL java.lang.StringBuilder::toString(0)
-    stack size: 4	INVOKEVIRTUAL	[getstatic_Simple_voidMethod_out, new_object::StringBuilder, ret_StringBuilder_append, ret_StringBuilder_toString]
-  (unhandled) INVOKEVIRTUAL java.io.PrintStream::println(1)
-Main.main() paramName = ret_StringBuilder_toString
-    stack size: 4	RETURN	[getstatic_Simple_voidMethod_out, new_object::StringBuilder, ret_StringBuilder_append, ret_PrintStream_println]
+2) com.rohidekar.Simple :: voidMethod() - 1 instructions
+    stack size: 0	RETURN	[]
   (unhandled) com.rohidekar.Simple::voidMethod()	return;	RETURN	(return void from method)
 Now use d3_helloworld_csv.git/singlefile_automated/ for visualization
