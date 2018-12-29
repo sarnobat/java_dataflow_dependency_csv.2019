@@ -136,41 +136,51 @@ public class Main {
               Instruction anInstruction = instructionHandle.getInstruction();
 
               if (anInstruction instanceof AASTORE) {
-                System.out.println("(unhandled) AASTORE");
+                System.out.println(" (unhandled) AASTORE");
+                stack.pop();
+                stack.pop();
+                stack.pop();
               } else if (anInstruction instanceof ATHROW) {
-                System.out.println("(unhandled) ATHROW");
+                System.out.println("  (unhandled) ATHROW");
               } else if (anInstruction instanceof GETFIELD) {
-                System.out.println("(unhandled) GETFIELD");
+                System.out.println("  (unhandled) GETFIELD");
               } else if (anInstruction instanceof CHECKCAST) {
-                System.out.println("(unhandled) CHECKCAST");
+                System.out.println("  (unhandled) CHECKCAST");
               } else if (anInstruction instanceof IF_ICMPNE) {
-                System.out.println("(unhandled) IF_ICMPNE");
+                  System.out.println("  (unhandled) IF_ICMPNE");
+              } else if (anInstruction instanceof IFLE) {
+                  System.out.println("  (unhandled) IFLE");
+              } else if (anInstruction instanceof IADD) {
+                  System.out.println("  (unhandled) IADD");
+                  stack.pop();
+                  stack.pop();
+                  stack.push("ret_add");
               } else if (anInstruction instanceof IF_ICMPLT) {
-                System.out.println("(unhandled) IF_ICMPLT");
+                System.out.println("  (unhandled) IF_ICMPLT");
               } else if (anInstruction instanceof POP) {
-                System.out.println("(unhandled) POP");
+                System.out.println("  (unhandled) POP");
                 stack.pop();
               } else if (anInstruction instanceof POP2) {
-                System.out.println("(unhandled) POP2");
+                System.out.println("  (unhandled) POP2");
                 stack.pop();
               } else if (anInstruction instanceof IFNE) {
-                System.out.println("(unhandled) IFNE");
+                System.out.println("  (unhandled) IFNE");
               } else if (anInstruction instanceof IFNULL) {
-                System.out.println("(unhandled) IFNULL");
+                System.out.println("  (unhandled) IFNULL");
               } else if (anInstruction instanceof IFEQ) {
-                System.out.println("(unhandled) IFEQ");
+                System.out.println("  (unhandled) IFEQ");
               } else if (anInstruction instanceof IINC) {
-                System.out.println("(unhandled) IINC");
+                System.out.println("  (unhandled) IINC");
               } else if (anInstruction instanceof INVOKEINTERFACE) {
-                System.out.println("(unhandled) INVOKEINTERFACE");
+                System.out.println("  (unhandled) INVOKEINTERFACE");
               } else if (anInstruction instanceof ISTORE) {
-                System.out.println("(unhandled) ISTORE");
+                System.out.println("  (unhandled) ISTORE");
               } else if (anInstruction instanceof ILOAD) {
-                System.out.println("(unhandled) ILOAD");
+                System.out.println("  (unhandled) ILOAD");
               } else if (anInstruction instanceof AALOAD) {
-                System.out.println("(unhandled) AALOAD");
+                System.out.println("  (unhandled) AALOAD");
               } else if (anInstruction instanceof ARRAYLENGTH) {
-                System.out.println("(unhandled) ARRAYLENGTH");
+                System.out.println("  (unhandled) ARRAYLENGTH");
               } else if (anInstruction instanceof INVOKEVIRTUAL) {
                 System.err.println(
                     "  (unhandled) INVOKEVIRTUAL "
@@ -180,7 +190,7 @@ public class Main {
                         + "()");
 
                 int argCount = ((INVOKEVIRTUAL) anInstruction).getArgumentTypes(cpg).length;
-                while (argCount > -1) {
+                while (argCount > 0) {
                   --argCount;
                   String paramName = stack.pop();
                   System.out.println("Main.main() paramName = " + paramName);
@@ -193,7 +203,10 @@ public class Main {
                         + "::"
                         + method.getName()
                         + "()\tConstantPushInstruction = "
-                        + ((ConstantPushInstruction) anInstruction).getValue());
+                        + anInstruction
+                        //+ ((ConstantPushInstruction) anInstruction).getValue()
+                        );
+                stack.push("constant");
               } else if (anInstruction instanceof ICONST) {
                 throw new RuntimeException();
               } else if (anInstruction instanceof ACONST_NULL) {
@@ -311,6 +324,7 @@ public class Main {
                           + method.getName()
                           + "()\tsymbol table is null for "
                           + methodGen.getMethod());
+                  stack.push("unknown");
                 } else {
                   LocalVariable variable =
                       methodGen
@@ -359,11 +373,11 @@ public class Main {
                 int length = ((INVOKESTATIC) anInstruction).getArgumentTypes(cpg).length;
                 // TODO: I'm not sure we should be popping EVERYTHING off the stack shoudl we? Or maybe we should. To be determined.
                 while (length > 0) {
-                  String paramValue = stack.pop();
-                  System.err.println("Main.main() paramValue = " + paramValue);
+                  //String paramValue = stack.pop();
+//                  System.err.println("Main.main() paramValue = " + paramValue);
                   --length;
                 }
-                stack.push("ret");
+                //stack.push("ret");
               } else if (anInstruction instanceof INVOKESPECIAL) {
               } else if (anInstruction instanceof LDC) {
                 stack.push(((LDC) anInstruction).getValue(cpg).toString());
