@@ -10,17 +10,47 @@ Main.main() popped instance reference	this
     stack size: 1	RETURN	[ret_Object_<init>]
   (unhandled) com.rohidekar.Simple::<init>()	return;	RETURN	(return void from method)
 
-2) com.rohidekar.Simple :: main() - 4 instructions
+2) com.rohidekar.Simple :: main() - 12 instructions
     stack size: 0	LDC	[]
 
     stack size: 1	LDC	[11111111]
 
     stack size: 2	INVOKESTATIC	[11111111, 9999999]
   (unhandled) com.rohidekar.Simple::main()	--[calls]-->	com.rohidekar.Simple::voidMethod()  INVOKESTATIC (invoke a static method and puts the result on the stack (might be void); the method is identified by method reference index in constant pool): 
-    stack size: 1	RETURN	[ret_Simple_voidMethod]
+ret_Simple_voidMethod	--[depends on]--> 9999999
+ret_Simple_voidMethod	--[depends on]--> 11111111
+    stack size: 1	ISTORE	[ret_Simple_voidMethod]
+  (unhandled) ISTORE
+    stack size: 1	ILOAD	[ret_Simple_voidMethod]
+  (unhandled) ILOAD
+    stack size: 1	ICONST	[ret_Simple_voidMethod]
+  (unhandled) com.rohidekar.Simple::main()	ICONST = iconst_1[4](1)
+    stack size: 2	IADD	[ret_Simple_voidMethod, constant_1]
+  (unhandled) IADD
+ret_add --[depends on]--> constant_1
+ret_add --[depends on]--> ret_Simple_voidMethod
+    stack size: 1	ISTORE	[ret_add]
+  (unhandled) ISTORE
+    stack size: 1	GETSTATIC	[ret_add]
+  (unhandled) com.rohidekar.Simple::main()	... = out;	GETSTATIC	(get a static field value of a class, where the field is identified by field reference in the constant pool index): 
+    stack size: 2	ILOAD	[ret_add, getstatic_Simple_main_out]
+  (unhandled) ILOAD
+    stack size: 2	INVOKEVIRTUAL	[ret_add, getstatic_Simple_main_out]
+  (unhandled) INVOKEVIRTUAL java.io.PrintStream::println(1)
+Main.main() paramName = getstatic_Simple_main_out
+    stack size: 2	RETURN	[ret_add, ret_PrintStream_println]
   (unhandled) com.rohidekar.Simple::main()	return;	RETURN	(return void from method)
 
-2) com.rohidekar.Simple :: voidMethod() - 1 instructions
-    stack size: 0	RETURN	[]
-  (unhandled) com.rohidekar.Simple::voidMethod()	return;	RETURN	(return void from method)
+2) com.rohidekar.Simple :: voidMethod() - 5 instructions
+    stack size: 0	GETSTATIC	[]
+  (unhandled) com.rohidekar.Simple::voidMethod()	... = out;	GETSTATIC	(get a static field value of a class, where the field is identified by field reference in the constant pool index): 
+    stack size: 1	ILOAD	[getstatic_Simple_voidMethod_out]
+  (unhandled) ILOAD
+    stack size: 1	INVOKEVIRTUAL	[getstatic_Simple_voidMethod_out]
+  (unhandled) INVOKEVIRTUAL java.io.PrintStream::println(1)
+Main.main() paramName = getstatic_Simple_voidMethod_out
+    stack size: 1	ILOAD	[ret_PrintStream_println]
+  (unhandled) ILOAD
+    stack size: 1	IRETURN	[ret_PrintStream_println]
+  (unhandled) com.rohidekar.Simple::voidMethod()	return ireturn;	ARETURN reference (return a reference from a method) 
 Now use d3_helloworld_csv.git/singlefile_automated/ for visualization

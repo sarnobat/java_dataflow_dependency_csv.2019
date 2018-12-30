@@ -30,7 +30,8 @@ public class Main {
 
   @SuppressWarnings("unused")
   public static void main(String[] args) {
-
+    // to avoid different invocation of the same method being considered the same node
+    int counter = 0;
     Collection<String> classFilePaths = new LinkedList<String>();
     _getClassFiles:
     {
@@ -181,10 +182,10 @@ public class Main {
                   System.err.println("Main.main() paramName = " + paramName);
                 }
                 stack.push(
-                    "ret_"
+                    "return "
                         + className.substring(className.lastIndexOf('.') + 1)
-                        + "_"
-                        + methodName);
+                        + "::"
+                        + methodName + "()");
               } else if (anInstruction instanceof ICONST) {
                 System.err.println(
                     "  (unhandled) "
@@ -220,7 +221,7 @@ public class Main {
                         + method.getName()
                         + "()\t"
                         + anInstruction);
-                stack.push("null");
+                stack.push("constant_null");
               } else if (anInstruction instanceof ARETURN) {
                 System.err.println(
                     "  (unhandled) "
@@ -271,7 +272,7 @@ public class Main {
                 String fieldName = ((GETSTATIC) anInstruction).getFieldName(cpg);
                 String className = javaClass.getClassName();
                 stack.push(
-                    "getstatic_"
+                    "static_"
                         + className.substring(className.lastIndexOf('.') + 1)
                         + "_"
                         + method.getName()
@@ -354,7 +355,7 @@ public class Main {
                           .getLocalVariableTable()
                           .getLocalVariable(variableIndex, 0);
                   String string = variable == null ? "null" : variable.getName();
-                  stack.push(string);
+                  stack.push("var " + string);
                   System.err.println(
                       "Main.main() just pushed onto stack (" + variableIndex + "): " + string);
                 }
@@ -386,10 +387,11 @@ public class Main {
                   String stackExpression = stack.pop();
                   String className = javaClass.getClassName();
                   System.out.println(
-                      className.substring(className.lastIndexOf('.') + 1)
-                          + "_"
+                      "var "
+                          + className.substring(className.lastIndexOf('.') + 1)
+                          + "::"
                           + method.getName()
-                          + "_"
+                          + "()::"
                           + variableName
                           + "\t--[depends on variable]--> "
                           + stackExpression);
@@ -409,17 +411,21 @@ public class Main {
                         //+ anInstruction
                         + " INVOKESTATIC (invoke a static method and puts the result on the stack (might be void); the method is identified by method reference index in constant pool): ");
                 int length = ((INVOKESTATIC) anInstruction).getArgumentTypes(cpg).length;
+                String item =
+                    "return "
+                        + className.substring(className.lastIndexOf('.') + 1)
+                        + "::"
+                        + ((INVOKESTATIC) anInstruction).getMethodName(cpg)
+                        +"() " +counter;
+                ++counter;
                 // TODO: I'm not sure we should be popping EVERYTHING off the stack shoudl we? Or maybe we should. To be determined.
                 while (length > 0) {
                   String paramValue = stack.pop();
                   //                  System.err.println("Main.main() paramValue = " + paramValue);
+                  System.out.println(item + "\t--[depends on]--> " + paramValue);
                   --length;
                 }
-                stack.push(
-                    "ret_"
-                        + className.substring(className.lastIndexOf('.') + 1)
-                        + "_"
-                        + ((INVOKESTATIC) anInstruction).getMethodName(cpg));
+                stack.push(item);
               } else if (anInstruction instanceof INVOKESPECIAL) {
                 System.err.println(
                     "  (unhandled) INVOKESPECIAL "
@@ -444,12 +450,12 @@ public class Main {
 
                 String className = ((INVOKESPECIAL) anInstruction).getClassName(cpg);
                 stack.push(
-                    "ret_"
+                    "return "
                         + className.substring(className.lastIndexOf('.') + 1)
                         + "_"
                         + ((INVOKESPECIAL) anInstruction).getMethodName(cpg));
               } else if (anInstruction instanceof LDC) {
-                stack.push(((LDC) anInstruction).getValue(cpg).toString());
+                stack.push("constant_" + ((LDC) anInstruction).getValue(cpg).toString());
                 System.err.println();
               } else if (anInstruction instanceof PUTFIELD) {
                 System.err.println();

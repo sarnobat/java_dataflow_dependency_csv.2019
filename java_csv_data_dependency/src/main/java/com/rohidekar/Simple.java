@@ -7,10 +7,13 @@ package com.rohidekar;
 public class Simple {
 
   public static void main(String[] args) {
-    voidMethod(11111111, 9999999);
+    int d = voidMethod(11111111, 9999999);
+    int f = voidMethod(d, 2222);
+    System.out.println(f);
   }
 
-  private static void voidMethod(int param1, int param2) {
-	  //System.out.println("Simple.voidMethod() " + param1);
+  private static int voidMethod(int param1, int param2) {
+	  System.out.println(param1);
+	  return param1;
   }
 }
