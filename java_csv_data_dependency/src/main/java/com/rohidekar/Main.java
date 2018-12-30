@@ -336,6 +336,7 @@ public class Main {
                         + anInstruction);
               } else if (anInstruction instanceof ILOAD) {
                 int variableIndex = ((ILOAD) anInstruction).getIndex();
+                System.err.println("Main.main() " + methodGen.getMethod().getLocalVariableTable());
                 if (methodGen.getMethod().getLocalVariableTable() == null) {
                   System.err.println(
                       "  (unhandled) "
@@ -345,16 +346,33 @@ public class Main {
                           + "()\tsymbol table is null for "
                           + methodGen.getMethod());
                   stack.push("unknown");
+                  throw new RuntimeException("Does this still get called?");
                 } else {
                   LocalVariable variable =
                       methodGen
                           .getMethod()
                           .getLocalVariableTable()
-                          .getLocalVariable(variableIndex, 0);
-                  String string = variable == null ? "null" : variable.getName();
-                  stack.push("var " + string);
+                          .getLocalVariable(variableIndex, instructionHandle.getPosition());
+                  if (variable == null) {
+                    throw new RuntimeException(
+                        "can't find variable "
+                            + variableIndex
+                            + ". Probably you have the wrong program counter");
+                  }
+                  String className = javaClass.getClassName();
+                  // TODO: I don't think we know that it will be "return" rather than "var"
+                  stack.push(
+                      "var "
+                          + className.substring(className.lastIndexOf('.') + 1)
+                          + "::"
+                          + method.getName()
+                          + "()::"
+                          + variable.getName());
                   System.err.println(
-                      "Main.main() just pushed onto stack (" + variableIndex + "): " + string);
+                      "Main.main() just pushed onto stack ("
+                          + variableIndex
+                          + "): "
+                          + variable.getName());
                 }
               } else if (anInstruction instanceof ALOAD) {
                 int variableIndex = ((ALOAD) anInstruction).getIndex();
@@ -395,6 +413,7 @@ public class Main {
                           + "() symbol table is null for "
                           + methodGen.getMethod());
                   stack.pop();
+                  throw new RuntimeException("does this get called?");
                 } else {
                   String variableName =
                       methodGen
@@ -403,7 +422,8 @@ public class Main {
                           .getLocalVariable(((ISTORE) anInstruction).getIndex())
                           .getName();
                   System.err.println(
-                      "Main.main() ISTORE (store a reference into a local variable #index): Declared and assigned variable:  "
+                      "Main.main() ISTORE (store int value into variable #index\n"
+                          + "): Declared and assigned variable:  "
                           + variableName);
                   String stackExpression = stack.pop();
                   String className = javaClass.getClassName();
