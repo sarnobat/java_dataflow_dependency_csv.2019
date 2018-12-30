@@ -360,7 +360,6 @@ public class Main {
                             + ". Probably you have the wrong program counter");
                   }
                   String className = javaClass.getClassName();
-                  // TODO: I don't think we know that it will be "return" rather than "var"
                   stack.push(
                       "var "
                           + className.substring(className.lastIndexOf('.') + 1)
