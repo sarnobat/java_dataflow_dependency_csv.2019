@@ -155,10 +155,6 @@ public class Main {
                 System.err.println("  (unhandled) IINC");
               } else if (anInstruction instanceof INVOKEINTERFACE) {
                 System.err.println("  (unhandled) INVOKEINTERFACE");
-              } else if (anInstruction instanceof ISTORE) {
-                System.err.println("  (unhandled) ISTORE");
-              } else if (anInstruction instanceof ILOAD) {
-                System.err.println("  (unhandled) ILOAD");
               } else if (anInstruction instanceof AALOAD) {
                 System.err.println("  (unhandled) AALOAD");
               } else if (anInstruction instanceof ARRAYLENGTH) {
@@ -185,7 +181,8 @@ public class Main {
                     "return "
                         + className.substring(className.lastIndexOf('.') + 1)
                         + "::"
-                        + methodName + "()");
+                        + methodName
+                        + "()");
               } else if (anInstruction instanceof ICONST) {
                 System.err.println(
                     "  (unhandled) "
@@ -337,6 +334,28 @@ public class Main {
                         + method.getName()
                         + "()\tGOTO (goes to another instruction at branchoffset): "
                         + anInstruction);
+              } else if (anInstruction instanceof ILOAD) {
+                int variableIndex = ((ILOAD) anInstruction).getIndex();
+                if (methodGen.getMethod().getLocalVariableTable() == null) {
+                  System.err.println(
+                      "  (unhandled) "
+                          + javaClass.getClassName()
+                          + "::"
+                          + method.getName()
+                          + "()\tsymbol table is null for "
+                          + methodGen.getMethod());
+                  stack.push("unknown");
+                } else {
+                  LocalVariable variable =
+                      methodGen
+                          .getMethod()
+                          .getLocalVariableTable()
+                          .getLocalVariable(variableIndex, 0);
+                  String string = variable == null ? "null" : variable.getName();
+                  stack.push("var " + string);
+                  System.err.println(
+                      "Main.main() just pushed onto stack (" + variableIndex + "): " + string);
+                }
               } else if (anInstruction instanceof ALOAD) {
                 int variableIndex = ((ALOAD) anInstruction).getIndex();
                 if (methodGen.getMethod().getLocalVariableTable() == null) {
@@ -359,7 +378,48 @@ public class Main {
                   System.err.println(
                       "Main.main() just pushed onto stack (" + variableIndex + "): " + string);
                 }
+              } else if (anInstruction instanceof ISTORE) {
+
+                System.err.println("  (unhandled) ISTORE");
+
+                if (stack.empty()) {
+                  throw new RuntimeException(
+                      "We can't be calling store if nothing was pushed onto the stack");
+                }
+                if (methodGen.getMethod().getLocalVariableTable() == null) {
+                  System.err.println(
+                      "  (unhandled) "
+                          + javaClass.getClassName()
+                          + "::"
+                          + method.getName()
+                          + "() symbol table is null for "
+                          + methodGen.getMethod());
+                  stack.pop();
+                } else {
+                  String variableName =
+                      methodGen
+                          .getMethod()
+                          .getLocalVariableTable()
+                          .getLocalVariable(((ISTORE) anInstruction).getIndex())
+                          .getName();
+                  System.err.println(
+                      "Main.main() ISTORE (store a reference into a local variable #index): Declared and assigned variable:  "
+                          + variableName);
+                  String stackExpression = stack.pop();
+                  String className = javaClass.getClassName();
+                  System.out.println(
+                      "var "
+                          + className.substring(className.lastIndexOf('.') + 1)
+                          + "::"
+                          + method.getName()
+                          + "()::"
+                          + variableName
+                          + "\t--[depends on variable]--> "
+                          + stackExpression);
+                }
               } else if (anInstruction instanceof ASTORE) {
+
+                System.err.println("  (unhandled) ISTORE");
 
                 if (stack.empty()) {
                   throw new RuntimeException(
@@ -416,7 +476,8 @@ public class Main {
                         + className.substring(className.lastIndexOf('.') + 1)
                         + "::"
                         + ((INVOKESTATIC) anInstruction).getMethodName(cpg)
-                        +"() " +counter;
+                        + "() "
+                        + counter;
                 ++counter;
                 // TODO: I'm not sure we should be popping EVERYTHING off the stack shoudl we? Or maybe we should. To be determined.
                 while (length > 0) {

@@ -9,6 +9,7 @@ public class Simple {
   public static void main(String[] args) {
     int d = voidMethod(11111111, 9999999);
     int f = voidMethod(d, 2222);
+    int g = voidMethod(f, 333);
     System.out.println(f);
   }
 
