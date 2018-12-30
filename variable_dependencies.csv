@@ -1,4 +1,3 @@
-"return Simple::voidMethod() 0","constant_11111111"
-"return Simple::voidMethod() 0","constant_9999999"
-"return Simple::voidMethod() 1","constant_2222"
-"var Simple::main()::d","return Simple::voidMethod() 0"
+"return Simple::voidMethod() 0","var null"
+"var Simple::main()::d","constant_2222"
+"var Simple::main()::f","return Simple::voidMethod() 0"

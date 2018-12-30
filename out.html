@@ -111,10 +111,8 @@ var force = d3.layout.force()
 
 function getData() {
 return  [
-  { source : "return Simple::voidMethod() 0", target : "constant_11111111" },
-  { source : "return Simple::voidMethod() 0", target : "constant_9999999" },
-  { source : "return Simple::voidMethod() 1", target : "constant_2222" },
-  { source : "var Simple::main()::d", target : "return Simple::voidMethod() 0" },
+  { source : "var Simple::main()::d", target : "constant_2222" },
+  { source : "var Simple::main()::f", target : "return Simple::voidMethod() 0" },
 ];
 }
 </script>
