@@ -21,10 +21,11 @@ import org.apache.bcel.generic.*;
 /**
  * 2018-12
  *
- * <p>usage: -Dexec.args="/Users/ssarnobat/trash/myproj/target"
+ * <p>usage: -Dexec.args="$HOME/trash/myproj/target"
  *
- * <p>A lot of this may be achievable with: javap -verbose
- * /Users/ssarnobat/webservices/cmp/authentication-services/target/classes/com/control4/authentication/AuthorizationServlet.class
+ * <p>A lot of this may be achievable without this tool, but instead using: javap -verbose
+ * $HOME/webservices/cmp/authentication-services/target/classes/com/control4/authentication/AuthorizationServlet.class
+ * plus an awk script possibly.
  */
 public class Main {
 
@@ -69,7 +70,8 @@ public class Main {
       }
     }
 
-    Collection<String> relationshipsCsvLines = null;
+    // I don't think we need this collection, just use regex from the command line
+    Collection<String> relationshipsCsvLines = new LinkedList<String>();
     {
       Collection<JavaClass> javaClasses = new LinkedList<JavaClass>();
       for (String classFilePath : classFilePaths) {
@@ -99,9 +101,13 @@ public class Main {
                   + "() - "
                   + methodGen.getInstructionList().size()
                   + " instructions");
+          //-----------------------------------------------------------------
           // main bit
+          //-----------------------------------------------------------------
           if (methodGen.getInstructionList() != null) {
 
+              // We need this to "recurse" into method calls
+              // If you don't keep it in sync with your visitor everything will become wrong (I think)
             Stack<String> stack = new Stack<String>();
             for (InstructionHandle instructionHandle = methodGen.getInstructionList().getStart();
                 instructionHandle != null;
@@ -166,6 +172,7 @@ public class Main {
               } else if (anInstruction instanceof ARRAYLENGTH) {
                 System.err.println("  (unhandled) ARRAYLENGTH");
               } else if (anInstruction instanceof INVOKEVIRTUAL) {
+                  // A method call
                 int argCount = ((INVOKEVIRTUAL) anInstruction).getArgumentTypes(cpg).length;
                 String className = ((INVOKEVIRTUAL) anInstruction).getClassName(cpg);
                 String methodName = ((INVOKEVIRTUAL) anInstruction).getMethodName(cpg);
@@ -360,12 +367,11 @@ public class Main {
                           .getLocalVariableTable()
                           .getLocalVariable(variableIndex, instructionHandle.getPosition());
                   if (variable == null) {
-                      System.err.println("Skipping ILOAD with null variable");
-//                    throw new RuntimeException(
-//                        "can't find variable "
-//                            + variableIndex
-//                            + ". Probably you have the wrong program counter");
-                  } else {
+                    throw new RuntimeException(
+                        "can't find variable "
+                            + variableIndex
+                            + ". Probably you have the wrong program counter");
+                  }
                   String className = javaClass.getClassName();
                   stack.push(
                       "var "
@@ -379,7 +385,6 @@ public class Main {
                           + variableIndex
                           + "): "
                           + variable.getName());
-                  }
                 }
               } else if (anInstruction instanceof ALOAD) {
                 int variableIndex = ((ALOAD) anInstruction).getIndex();
@@ -411,9 +416,7 @@ public class Main {
                   throw new RuntimeException(
                       "We can't be calling store if nothing was pushed onto the stack");
                 }
-                if (anInstruction==null) {
-                } else if (methodGen.getMethod().getLocalVariableTable()
-                        .getLocalVariable(((ISTORE) anInstruction).getIndex()) == null) {
+                if (methodGen.getMethod().getLocalVariableTable() == null) {
                   System.err.println(
                       "  (unhandled) "
                           + javaClass.getClassName()
@@ -422,8 +425,7 @@ public class Main {
                           + "() symbol table is null for "
                           + methodGen.getMethod());
                   stack.pop();
-                  // yes it does
-                  //throw new RuntimeException("does this get called?");
+                  throw new RuntimeException("does this get called?");
                 } else {
                   String variableName =
                       methodGen
@@ -437,13 +439,14 @@ public class Main {
                           + variableName);
                   String stackExpression = stack.pop();
                   String className = javaClass.getClassName();
-                  System.out.println(
+                  String left = className.substring(className.lastIndexOf('.') + 1)
+                                          + "::"
+                                          + method.getName()
+                                          + "()::"
+                                          + variableName;
+                System.out.println(
                       "var "
-                          + className.substring(className.lastIndexOf('.') + 1)
-                          + "::"
-                          + method.getName()
-                          + "()::"
-                          + variableName
+                          + left
                           + "\t--[depends on variable]--> "
                           + stackExpression);
                 }
@@ -465,13 +468,6 @@ public class Main {
                           + methodGen.getMethod());
                   stack.pop();
                 } else {
-                    if (methodGen
-                          .getMethod()
-                          .getLocalVariableTable()
-                          .getLocalVariable(((ASTORE) anInstruction).getIndex()) == null) {
-                        System.err.println(
-                                "Main.main() - this will give a nullpointerexception");
-                    } else {
                   String variableName =
                       methodGen
                           .getMethod()
@@ -492,7 +488,6 @@ public class Main {
                           + variableName
                           + "\t--[depends on variable]--> "
                           + stackExpression);
-                    }
                 }
               } else if (anInstruction instanceof INVOKESTATIC) {
                 String className = ((INVOKESTATIC) anInstruction).getClassName(cpg);
@@ -514,7 +509,7 @@ public class Main {
                         + className.substring(className.lastIndexOf('.') + 1)
                         + "::"
                         + ((INVOKESTATIC) anInstruction).getMethodName(cpg)
-                        + "() "
+                        + "() invocation_number_"
                         + counter;
                 ++counter;
                 // TODO: I'm not sure we should be popping EVERYTHING off the stack shoudl we? Or maybe we should. To be determined.
@@ -586,6 +581,7 @@ public class Main {
         }
       }
     }
+    // Not needed, just do a regex replace
     _printRelationships:
     {
     }
