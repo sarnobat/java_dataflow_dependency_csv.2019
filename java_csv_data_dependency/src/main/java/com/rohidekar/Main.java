@@ -126,7 +126,9 @@ public class Main {
               } else if (anInstruction instanceof CHECKCAST) {
                 System.err.println("  (unhandled) CHECKCAST");
               } else if (anInstruction instanceof IF_ICMPNE) {
-                System.err.println("  (unhandled) IF_ICMPNE");
+                  System.err.println("  (unhandled) IF_ICMPNE");
+              } else if (anInstruction instanceof IF_ICMPGE) {
+                  System.err.println("  (unhandled) IF_ICMPGE");
               } else if (anInstruction instanceof IFLE) {
                 System.err.println("  (unhandled) IFLE");
               } else if (anInstruction instanceof IADD) {
@@ -152,7 +154,9 @@ public class Main {
               } else if (anInstruction instanceof IFEQ) {
                 System.err.println("  (unhandled) IFEQ");
               } else if (anInstruction instanceof IINC) {
-                System.err.println("  (unhandled) IINC");
+                  System.err.println("  (unhandled) IINC");
+              } else if (anInstruction instanceof INSTANCEOF) {
+                  System.err.println("  (unhandled) INSTANCEOF");
               } else if (anInstruction instanceof INVOKEINTERFACE) {
                 System.err.println("  (unhandled) INVOKEINTERFACE");
               } else if (anInstruction instanceof AALOAD) {
@@ -354,11 +358,12 @@ public class Main {
                           .getLocalVariableTable()
                           .getLocalVariable(variableIndex, instructionHandle.getPosition());
                   if (variable == null) {
-                    throw new RuntimeException(
-                        "can't find variable "
-                            + variableIndex
-                            + ". Probably you have the wrong program counter");
-                  }
+                      System.err.println("Skipping ILOAD with null variable");
+//                    throw new RuntimeException(
+//                        "can't find variable "
+//                            + variableIndex
+//                            + ". Probably you have the wrong program counter");
+                  } else {
                   String className = javaClass.getClassName();
                   stack.push(
                       "var "
@@ -372,6 +377,7 @@ public class Main {
                           + variableIndex
                           + "): "
                           + variable.getName());
+                  }
                 }
               } else if (anInstruction instanceof ALOAD) {
                 int variableIndex = ((ALOAD) anInstruction).getIndex();
@@ -403,7 +409,9 @@ public class Main {
                   throw new RuntimeException(
                       "We can't be calling store if nothing was pushed onto the stack");
                 }
-                if (methodGen.getMethod().getLocalVariableTable() == null) {
+                if (anInstruction==null) {
+                } else if (methodGen.getMethod().getLocalVariableTable()
+                        .getLocalVariable(((ISTORE) anInstruction).getIndex()) == null) {
                   System.err.println(
                       "  (unhandled) "
                           + javaClass.getClassName()
@@ -412,7 +420,8 @@ public class Main {
                           + "() symbol table is null for "
                           + methodGen.getMethod());
                   stack.pop();
-                  throw new RuntimeException("does this get called?");
+                  // yes it does
+                  //throw new RuntimeException("does this get called?");
                 } else {
                   String variableName =
                       methodGen
@@ -454,6 +463,13 @@ public class Main {
                           + methodGen.getMethod());
                   stack.pop();
                 } else {
+                    if (methodGen
+                          .getMethod()
+                          .getLocalVariableTable()
+                          .getLocalVariable(((ASTORE) anInstruction).getIndex()) == null) {
+                        System.err.println(
+                                "Main.main() - this will give a nullpointerexception");
+                    } else {
                   String variableName =
                       methodGen
                           .getMethod()
@@ -474,6 +490,7 @@ public class Main {
                           + variableName
                           + "\t--[depends on variable]--> "
                           + stackExpression);
+                    }
                 }
               } else if (anInstruction instanceof INVOKESTATIC) {
                 String className = ((INVOKESTATIC) anInstruction).getClassName(cpg);
