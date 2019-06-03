@@ -125,6 +125,8 @@ public class Main {
                 System.err.println("  (unhandled) GETFIELD");
               } else if (anInstruction instanceof CHECKCAST) {
                 System.err.println("  (unhandled) CHECKCAST");
+              } else if (anInstruction instanceof IF_ICMPEQ) {
+                  System.err.println("  (unhandled) IF_ICMPEQ");
               } else if (anInstruction instanceof IF_ICMPNE) {
                   System.err.println("  (unhandled) IF_ICMPNE");
               } else if (anInstruction instanceof IF_ICMPGE) {
