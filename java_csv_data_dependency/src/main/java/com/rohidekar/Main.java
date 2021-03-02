@@ -24,7 +24,7 @@ import org.apache.bcel.generic.*;
  * <p>usage: -Dexec.args="$HOME/trash/myproj/target"
  *
  * <p>A lot of this may be achievable without this tool, but instead using: javap -verbose
- * $HOME/webservices/cmp/authentication-services/target/classes/com/control4/authentication/AuthorizationServlet.class
+ * $HOME/webservices/cmp/authentication-services/target/classes/com/mycompany/authentication/AuthorizationServlet.class
  * plus an awk script possibly.
  */
 public class Main {
@@ -87,11 +87,23 @@ public class Main {
 
       for (JavaClass javaClass : javaClasses) {
           System.err.println("Main.main() - 1) " + javaClass.getClassName());
+          if (javaClass.isEnum()) {
+        	  System.out.println("Main.main() - [warn] skipping enum " + javaClass.getClassName());
+        	  continue;
+          }
         for (Method method : javaClass.getMethods()) {
           System.err.println();
           ConstantPoolGen cpg = new ConstantPoolGen(javaClass.getConstantPool());
           MethodGen methodGen = new MethodGen(method, javaClass.getClassName(), cpg);
-          LocalVariableTable symbolTable = methodGen.getMethod().getLocalVariableTable();
+          LocalVariableTable localVariableTable = methodGen
+		      .getMethod()
+		      .getLocalVariableTable();
+          if (methodGen.getInstructionList() == null) {
+        	  if (skipErrors()) {
+        		  continue;
+        	  }
+          }
+		LocalVariableTable symbolTable = localVariableTable;
           System.err.println("Main.main() - 2) "
                   + javaClass.getClassName()
                   + " :: "
@@ -317,6 +329,11 @@ public class Main {
                         + "()\t"
                         + ((PUTSTATIC) anInstruction).getFieldName(cpg)
                         + " = ...;\tPUTSTATIC\t(set static field to value in a class, where the field is identified by a field reference index in constant pool): ");
+                if (stack.isEmpty()) {
+                	if (skipErrors()) {
+                		continue;
+                	}
+                }
                 stack.pop(); //confirmed
                 System.err.println();
               } else if (anInstruction instanceof RETURN) {
@@ -347,8 +364,8 @@ public class Main {
                         + anInstruction);
               } else if (anInstruction instanceof ILOAD) {
                 int variableIndex = ((ILOAD) anInstruction).getIndex();
-                System.err.println("Main.main() " + methodGen.getMethod().getLocalVariableTable());
-                if (methodGen.getMethod().getLocalVariableTable() == null) {
+                System.err.println("Main.main() " + localVariableTable);
+                if (localVariableTable == null) {
                   System.err.println(
                       "  (unhandled) "
                           + javaClass.getClassName()
@@ -360,15 +377,17 @@ public class Main {
                   throw new RuntimeException("Does this still get called?");
                 } else {
                   LocalVariable variable =
-                      methodGen
-                          .getMethod()
-                          .getLocalVariableTable()
+                      localVariableTable
                           .getLocalVariable(variableIndex, instructionHandle.getPosition());
                   if (variable == null) {
-                    throw new RuntimeException(
-                        "can't find variable "
-                            + variableIndex
-                            + ". Probably you have the wrong program counter");
+                	  if (skipErrors()) {
+                		  continue;
+                	  } else {
+	                    throw new RuntimeException(
+	                        "can't find variable "
+	                            + variableIndex
+	                            + ". Probably you have the wrong program counter");
+                	  }
                   }
                   String className = javaClass.getClassName();
                   stack.push(
@@ -386,7 +405,7 @@ public class Main {
                 }
               } else if (anInstruction instanceof ALOAD) {
                 int variableIndex = ((ALOAD) anInstruction).getIndex();
-                if (methodGen.getMethod().getLocalVariableTable() == null) {
+                if (localVariableTable == null) {
                   System.err.println(
                       "  (unhandled) "
                           + javaClass.getClassName()
@@ -397,9 +416,7 @@ public class Main {
                   stack.push("unknown");
                 } else {
                   LocalVariable variable =
-                      methodGen
-                          .getMethod()
-                          .getLocalVariableTable()
+                      localVariableTable
                           .getLocalVariable(variableIndex, 0);
                   String string = variable == null ? "null" : variable.getName();
                   stack.push("var " + string);
@@ -411,10 +428,14 @@ public class Main {
                 System.err.println("  (unhandled) ISTORE");
 
                 if (stack.empty()) {
+                	if (skipErrors()) {
+                		continue;
+                	} else {
                   throw new RuntimeException(
                       "We can't be calling store if nothing was pushed onto the stack");
+                	}
                 }
-                if (methodGen.getMethod().getLocalVariableTable() == null) {
+                if (localVariableTable == null) {
                   System.err.println(
                       "  (unhandled) "
                           + javaClass.getClassName()
@@ -425,11 +446,15 @@ public class Main {
                   stack.pop();
                   throw new RuntimeException("does this get called?");
                 } else {
-                  String variableName =
-                      methodGen
-                          .getMethod()
-                          .getLocalVariableTable()
-                          .getLocalVariable(((ISTORE) anInstruction).getIndex())
+                  LocalVariable localVariable = localVariableTable
+                          .getLocalVariable(((ISTORE) anInstruction).getIndex());
+                  if (localVariable == null) {
+                	  if (skipErrors()) {
+                		  continue;
+                	  }
+                  }
+				String variableName =
+                      localVariable
                           .getName();
                   System.err.println(
                       "Main.main() ISTORE (store int value into variable #index "
@@ -453,10 +478,14 @@ public class Main {
                 System.err.println("  (unhandled) ISTORE");
 
                 if (stack.empty()) {
+                    	if (skipErrors()) {
+                    		continue;
+                    	} else {
                   throw new RuntimeException(
                       "We can't be calling store if nothing was pushed onto the stack");
+                    	}
                 }
-                if (methodGen.getMethod().getLocalVariableTable() == null) {
+                if (localVariableTable == null) {
                   System.err.println(
                       "  (unhandled) "
                           + javaClass.getClassName()
@@ -466,10 +495,9 @@ public class Main {
                           + methodGen.getMethod());
                   stack.pop();
                 } else {
+                	try {
                   String variableName =
-                      methodGen
-                          .getMethod()
-                          .getLocalVariableTable()
+                      localVariableTable
                           .getLocalVariable(((ASTORE) anInstruction).getIndex())
                           .getName();
                   System.err.println(
@@ -486,6 +514,12 @@ public class Main {
                           + variableName
                           + "\t--[depends on variable]--> "
                           + stackExpression);
+                	} catch (NullPointerException e) {
+                		if (skipErrors()) {
+                			System.err.println("Main.main() [warn] skipping error for " + anInstruction);
+                			continue;
+                		}
+                	}
                 }
               } else if (anInstruction instanceof INVOKESTATIC) {
                 String className = ((INVOKESTATIC) anInstruction).getClassName(cpg);
@@ -511,11 +545,21 @@ public class Main {
                         + counter;
                 ++counter;
                 // TODO: I'm not sure we should be popping EVERYTHING off the stack shoudl we? Or maybe we should. To be determined.
+                boolean continu = false;
                 while (length > 0) {
+                	if (stack.size() == 0) {
+                		if (skipErrors()) {
+                			continu=true;
+                			break;
+                		}
+                	}
                   String paramValue = stack.pop();
                   //                  System.err.println("Main.main() paramValue = " + paramValue);
                   System.out.println(item + "\t--[depends on]--> " + paramValue);
                   --length;
+                }
+                if (continu) {
+                	continue;
                 }
                 stack.push(item);
               } else if (anInstruction instanceof INVOKESPECIAL) {
@@ -549,13 +593,64 @@ public class Main {
               } else if (anInstruction instanceof LDC) {
                 stack.push("constant_" + ((LDC) anInstruction).getValue(cpg).toString());
                 System.err.println();
+              } else if (anInstruction instanceof NEWARRAY) {
+            	  System.err.println("  (unhandled) NEWARRAY");
               } else if (anInstruction instanceof PUTFIELD) {
-                System.err.println();
-                PUTFIELD p = (PUTFIELD) anInstruction;
-                String fieldNameBeingAssigned = p.getName(methodGen.getConstantPool());
-                // these may be the wrong way round
-                String objectRef = stack.pop();
-                String value = stack.pop();
+            	  System.err.println("  (unhandled) PUTFIELD");
+              } else if (anInstruction instanceof LSTORE) {
+            	  System.err.println("  (unhandled) LSTORE");
+              } else if (anInstruction instanceof I2L) {
+            	  System.err.println("  (unhandled) I2L");
+              } else if (anInstruction instanceof LDC2_W) {
+            	  System.err.println("  (unhandled) LDC2_W");
+              } else if (anInstruction instanceof LLOAD) {
+            	  System.err.println("  (unhandled) LLOAD");
+              } else if (anInstruction instanceof LMUL) {
+            	  System.err.println("  (unhandled) LMUL");
+              } else if (anInstruction instanceof LSUB) {
+            	  System.err.println("  (unhandled) LSUB");
+              } else if (anInstruction instanceof LADD) {
+            	  System.err.println("  (unhandled) LADD");
+              } else if (anInstruction instanceof LRETURN) {
+            	  System.err.println("  (unhandled) LRETURN");
+              } else if (anInstruction instanceof IFLT) {
+            	  System.err.println("  (unhandled) IFLT");
+              } else if (anInstruction instanceof LCMP) {
+            	  System.err.println("  (unhandled) LCMP");
+              } else if (anInstruction instanceof IFGT) {
+            	  System.err.println("  (unhandled) IFGT");
+              } else if (anInstruction instanceof LDIV) {
+            	  System.err.println("  (unhandled) LDIV");
+              } else if (anInstruction instanceof IFGE) {
+            	  System.err.println("  (unhandled) IFGE");
+              } else if (anInstruction instanceof IF_ACMPNE) {
+            	  System.err.println("  (unhandled) IF_ACMPNE");
+              } else if (anInstruction instanceof ISTORE) {
+            	  System.err.println("  (unhandled) ISTORE");
+              } else if (anInstruction instanceof IALOAD) {
+            	  System.err.println("  (unhandled) IALOAD");
+              } else if (anInstruction instanceof IF_ICMPLE) {
+            	  System.err.println("  (unhandled) IF_ICMPLE");
+              } else if (anInstruction instanceof ISUB) {
+            	  System.err.println("  (unhandled) ISUB");
+              } else if (anInstruction instanceof IOR) {
+            	  System.err.println("  (unhandled) IOR");
+              } else if (anInstruction instanceof IASTORE) {
+            	  System.err.println("  (unhandled) IASTORE");
+              } else if (anInstruction instanceof DUP2) {
+            	  System.err.println("  (unhandled) DUP2");
+              } else if (anInstruction instanceof LOOKUPSWITCH) {
+            	  System.err.println("  (unhandled) LOOKUPSWITCH");
+              } else if (anInstruction instanceof TABLESWITCH) {
+            	  System.err.println("  (unhandled) TABLESWITCH");
+              } else if (anInstruction instanceof INEG) {
+            	  System.err.println("  (unhandled) INEG");
+              } else if (anInstruction instanceof LCONST) {
+            	  System.err.println("  (unhandled) LCONST");
+              } else if (anInstruction instanceof MONITORENTER) {
+            	  System.err.println("  (unhandled) MONITORENTER");
+              } else if (anInstruction instanceof MONITOREXIT) {
+            	  System.err.println("  (unhandled) MONITOREXIT");
               } else {
                 System.err.println(
                     "  (unhandled) "
@@ -564,6 +659,9 @@ public class Main {
                         + method.getName()
                         + "() "
                         + anInstruction);
+                if (skipErrors()) {
+                	continue;
+                }
                 throw new RuntimeException(
                     "Instruction to consider visiting: "
                         + anInstruction.getClass().getSimpleName());
@@ -586,4 +684,8 @@ public class Main {
 
     System.err.println("Now use d3_helloworld_csv.git/singlefile_automated/ for visualization");
   }
+
+private static boolean skipErrors() {
+	return System.getProperties().containsKey("skiperrors");
+}
 }
