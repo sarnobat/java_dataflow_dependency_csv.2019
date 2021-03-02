@@ -8,5 +8,8 @@ find /Users/ssarnobat/webservices/cmp/authentication-services/target/classes/ -i
 # 2019
 cd ~/github/java_dataflow_dependency_csv/java_csv_data_dependency/ && find $PWD -type f -iname "Simple.class" | JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.8.0_211.jdk/Contents/Home/ mvn --quiet compile exec:java -Dexec.mainClass=com.rohidekar.Main 2>/dev/null | perl -pe 's{\s*...depends on( variable)?....\s*}{","}g' | perl -pe 's{(^.*$)}{"$1"}g' | sort | tee /tmp/variable_dependencies.csv
 
+# 2021
+/Library/Java/JavaVirtualMachines/jdk1.8.0_211.jdk/Contents/Home
+
 # Now use d3_helloworld_csv.git/singlefile_automated/ for visualization
 cd /Users/srsarnob/github/d3_csv/singlefile_automated && cat /tmp/variable_dependencies.csv  | sh csv2d3.sh  | tee /tmp/index.html && popd
