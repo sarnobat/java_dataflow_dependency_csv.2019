@@ -29,7 +29,6 @@ import org.apache.bcel.generic.*;
  */
 public class Main {
 
-  @SuppressWarnings("unused")
   public static void main(String[] args) {
     // to avoid different invocation of the same method being considered the same node
     int counter = 0;
@@ -87,14 +86,13 @@ public class Main {
       }
 
       for (JavaClass javaClass : javaClasses) {
-        System.err.println("1) " + javaClass.getClassName());
+          System.err.println("Main.main() - 1) " + javaClass.getClassName());
         for (Method method : javaClass.getMethods()) {
           System.err.println();
           ConstantPoolGen cpg = new ConstantPoolGen(javaClass.getConstantPool());
           MethodGen methodGen = new MethodGen(method, javaClass.getClassName(), cpg);
           LocalVariableTable symbolTable = methodGen.getMethod().getLocalVariableTable();
-          System.err.println(
-              "2) "
+          System.err.println("Main.main() - 2) "
                   + javaClass.getClassName()
                   + " :: "
                   + method.getName()
@@ -113,11 +111,11 @@ public class Main {
                 instructionHandle != null;
                 instructionHandle = instructionHandle.getNext()) {
               Instruction anInstruction = instructionHandle.getInstruction();
-              System.err.println(
-                  "    stack size: "
+              System.err.println("Main.main()" +
+                  "    stack contents: "
                       + stack.size()
-                      + "\t"
-                      + anInstruction.getClass().getSimpleName()
+                      //+ "\t"
+                      //+ anInstruction.getClass().getSimpleName()
                       + "\t"
                       + stack);
               if (anInstruction instanceof AASTORE) {
@@ -434,7 +432,7 @@ public class Main {
                           .getLocalVariable(((ISTORE) anInstruction).getIndex())
                           .getName();
                   System.err.println(
-                      "Main.main() ISTORE (store int value into variable #index\n"
+                      "Main.main() ISTORE (store int value into variable #index "
                           + "): Declared and assigned variable:  "
                           + variableName);
                   String stackExpression = stack.pop();
