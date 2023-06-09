@@ -532,6 +532,7 @@ public class Main {
     }
 
     private static boolean skipErrors() {
-        return System.getProperties().containsKey("skiperrors");
+        return Boolean.valueOf(System.getProperty("skiperrors", "true"));
+//        return System.getProperties().containsKey("skiperrors");
     }
 }

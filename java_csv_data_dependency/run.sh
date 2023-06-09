@@ -13,7 +13,5 @@ test $# -gt 0 && echo "args given" || echo "no args"
 # TODO: string comparison check (both ways)
 
 cat <<EOF | batcat --plain --paging=never --language sh --theme TwoDark
-mvn assembly:single
-
-find $PWD -maxdepth 50 -type f -iname "**class" | java -classpath /Volumes/git/github/java_dataflow_dependency_csv/java_csv_data_dependency/target/java_csv_data_dependency-1.0-SNAPSHOT-jar-with-dependencies.jar  com.rohidekar.Main
+mvn assembly:single && find $PWD -maxdepth 50 -type f -iname "**class" | java -classpath /Volumes/git/github/java_dataflow_dependency_csv/java_csv_data_dependency/target/java_csv_data_dependency-1.0-SNAPSHOT-jar-with-dependencies.jar  com.rohidekar.Main | tee out.txt
 EOF
