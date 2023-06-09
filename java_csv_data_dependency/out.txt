@@ -1,126 +1,128 @@
-Main.main() /Volumes/git/github/java_dataflow_dependency_csv/java_csv_data_dependency/target/classes/gr/gousiosg/javacg/stat/ClassVisitor.class
-Main.main() /Volumes/git/github/java_dataflow_dependency_csv/java_csv_data_dependency/target/classes/gr/gousiosg/javacg/stat/MethodVisitor.class
-Main.main() /Volumes/git/github/java_dataflow_dependency_csv/java_csv_data_dependency/target/classes/com/rohidekar/Simple.class
-Main.main() /Volumes/git/github/java_dataflow_dependency_csv/java_csv_data_dependency/target/classes/com/rohidekar/Main.class
-var ClassVisitor::visitJavaClass()::methods	--[depends on variable]--> return JavaClass::getMethods()
-var ClassVisitor::visitJavaClass()::i	--[depends on variable]--> constant_0
-var ClassVisitor::visitConstantPool()::i	--[depends on variable]--> constant_0
-var ClassVisitor::visitConstantPool()::constant	--[depends on variable]--> return ConstantPool::getConstant()
-var ClassVisitor::visitConstantPool()::referencedClass	--[depends on variable]--> return ConstantPool::constantToString()
-return String::format() invocation_number_0	--[depends on]--> new_array
-return String::format() invocation_number_0	--[depends on]--> constant_1
-var ClassVisitor::visitMethod()::mg	--[depends on variable]--> return MethodGen_<init>
-var ClassVisitor::visitMethod()::visitor	--[depends on variable]--> return MethodVisitor_<init>
-var MethodVisitor::start()::ih	--[depends on variable]--> return InstructionList::getStart()
-var MethodVisitor::start()::i	--[depends on variable]--> return InstructionHandle::getInstruction()
-var MethodVisitor::start()::ih	--[depends on variable]--> return InstructionHandle::getNext()
-var MethodVisitor::visitInstruction()::opcode	--[depends on variable]--> return Instruction::getOpcode()
-return String::format() invocation_number_1	--[depends on]--> new_array
-return String::format() invocation_number_1	--[depends on]--> new_array
-return String::format() invocation_number_2	--[depends on]--> new_array
-return String::format() invocation_number_2	--[depends on]--> new_array
-return String::format() invocation_number_3	--[depends on]--> new_array
-return String::format() invocation_number_3	--[depends on]--> new_array
-return String::format() invocation_number_4	--[depends on]--> new_array
-return String::format() invocation_number_4	--[depends on]--> new_array
-var Simple::main()::myLocalVariable3	--[depends on variable]--> constant_2222
-return Simple::voidMethod() invocation_number_5	--[depends on]--> var Simple::main()::myLocalVariable3
-var Simple::main()::myMethodCallReturnValue	--[depends on variable]--> return Simple::voidMethod() invocation_number_5
-var Main::main()::counter	--[depends on variable]--> constant_0
-var Main::main()::classFilePaths	--[depends on variable]--> return LinkedList_<init>
-var Main::main()::br	--[depends on variable]--> constant_null
-var Main::main()::br	--[depends on variable]--> return BufferedReader_<init>
-var Main::main()::line	--[depends on variable]--> return BufferedReader::readLine()
-var Main::main()::line	--[depends on variable]--> var null
-var Main::main()::e	--[depends on variable]--> return BufferedReader::close()
-var Main::main()::classFilePath	--[depends on variable]--> return IOException::printStackTrace()
-var Main::main()::e	--[depends on variable]--> return BufferedReader::close()
-var Main::main()::e	--[depends on variable]--> return BufferedReader::close()
-var Main::main()::br	--[depends on variable]--> constant_0
-var Main::main()::br	--[depends on variable]--> return LinkedList_<init>
-var Main::main()::line	--[depends on variable]--> return LinkedList_<init>
-var Main::main()::e	--[depends on variable]--> var null
-var Main::main()::classFilePath	--[depends on variable]--> var null
-return Paths::get() invocation_number_6	--[depends on]--> new_array
-return Paths::get() invocation_number_6	--[depends on]--> constant_0
-return Preconditions::checkNotNull() invocation_number_7	--[depends on]--> return Paths::get() invocation_number_6
-var Main::main()::classParser	--[depends on variable]--> return ClassParser_<init>
-return Preconditions::checkNotNull() invocation_number_8	--[depends on]--> var null
-return Preconditions::checkNotNull() invocation_number_9	--[depends on]--> return ClassParser::parse()
-var Main::main()::jc	--[depends on variable]--> return Preconditions::checkNotNull() invocation_number_9
-var Main::main()::jc	--[depends on variable]--> var null
-var Main::main()::e	--[depends on variable]--> var null
-var Main::main()::classFilePath	--[depends on variable]--> var null
-var Main::main()::jc	--[depends on variable]--> constant_0
-var Main::main()::classParser	--[depends on variable]--> var null
-var Main::main()::cpg	--[depends on variable]--> return ConstantPoolGen_<init>
-var Main::main()::methodGen	--[depends on variable]--> return MethodGen_<init>
-var Main::main()::localVariableTable	--[depends on variable]--> return Method::getLocalVariableTable()
-var Main::main()::symbolTable	--[depends on variable]--> var null
-var Main::main()::stack	--[depends on variable]--> return Stack_<init>
-var Main::main()::instructionHandle	--[depends on variable]--> return InstructionList::getStart()
-var Main::main()::anInstruction	--[depends on variable]--> return InstructionHandle::getInstruction()
-var Main::main()::a1	--[depends on variable]--> return Stack::pop()
-var Main::main()::a3	--[depends on variable]--> return Stack::pop()
-var Main::main()::ret	--[depends on variable]--> constant_ret_add
-return String::valueOf() invocation_number_11	--[depends on]--> var null
-return String::valueOf() invocation_number_12	--[depends on]--> var null
-var Main::main()::a1	--[depends on variable]--> return INVOKEVIRTUAL::getArgumentTypes()
-var Main::main()::a3	--[depends on variable]--> return INVOKEVIRTUAL::getClassName()
-var Main::main()::ret	--[depends on variable]--> return INVOKEVIRTUAL::getMethodName()
-var Main::main()::paramName	--[depends on variable]--> return Stack::pop()
-ret_add --[depends on]--> constant_1
-ret_add --[depends on]--> return String::lastIndexOf()
-var Main::main()::a1	--[depends on variable]--> return GETSTATIC::getFieldName()
-var Main::main()::a3	--[depends on variable]--> return JavaClass::getClassName()
-ret_add --[depends on]--> constant_1
-ret_add --[depends on]--> return String::lastIndexOf()
-var Main::main()::a1	--[depends on variable]--> return Type::toString()
-ret_add --[depends on]--> constant_1
-ret_add --[depends on]--> return String::lastIndexOf()
-var Main::main()::a1	--[depends on variable]--> return ILOAD::getIndex()
-var Main::main()::a3	--[depends on variable]--> return LocalVariableTable::getLocalVariable()
-var Main::main()::ret	--[depends on variable]--> return JavaClass::getClassName()
-ret_add --[depends on]--> constant_1
-ret_add --[depends on]--> return String::lastIndexOf()
-var Main::main()::a1	--[depends on variable]--> return ALOAD::getIndex()
-var Main::main()::a3	--[depends on variable]--> return LocalVariableTable::getLocalVariable()
-var Main::main()::ret	--[depends on variable]--> return LocalVariable::getName()
-var Main::main()::a1	--[depends on variable]--> return LocalVariableTable::getLocalVariable()
-var Main::main()::a3	--[depends on variable]--> return LocalVariable::getName()
-var Main::main()::ret	--[depends on variable]--> return Stack::pop()
-var Main::main()::paramName	--[depends on variable]--> return JavaClass::getClassName()
-ret_add --[depends on]--> constant_1
-ret_add --[depends on]--> return String::lastIndexOf()
-return String::valueOf() invocation_number_17	--[depends on]--> return String::substring()
-var Main::main()::left	--[depends on variable]--> return StringBuilder::toString()
-var Main::main()::a1	--[depends on variable]--> return LocalVariable::getName()
-var Main::main()::a3	--[depends on variable]--> return Stack::pop()
-var Main::main()::ret	--[depends on variable]--> return JavaClass::getClassName()
-ret_add --[depends on]--> constant_1
-ret_add --[depends on]--> return String::lastIndexOf()
-var Main::main()::a1	--[depends on variable]--> return PrintStream::println()
-var Main::main()::a1	--[depends on variable]--> return INVOKESTATIC::getClassName()
-var Main::main()::a3	--[depends on variable]--> return INVOKESTATIC::getArgumentTypes()
-ret_add --[depends on]--> constant_1
-ret_add --[depends on]--> return String::lastIndexOf()
-var Main::main()::ret	--[depends on variable]--> return StringBuilder::toString()
-var Main::main()::paramName	--[depends on variable]--> constant_0
-var Main::main()::paramName	--[depends on variable]--> constant_1
-var Main::main()::left	--[depends on variable]--> return Stack::pop()
-return String::valueOf() invocation_number_21	--[depends on]--> var null
-var Main::main()::a1	--[depends on variable]--> return Stack::pop()
-var Main::main()::a3	--[depends on variable]--> return INVOKESPECIAL::getArgumentTypes()
-var Main::main()::ret	--[depends on variable]--> return Stack::pop()
-var Main::main()::ret	--[depends on variable]--> return INVOKESPECIAL::getClassName()
-ret_add --[depends on]--> constant_1
-ret_add --[depends on]--> return String::lastIndexOf()
-var Main::main()::instructionHandle	--[depends on variable]--> return InstructionHandle::getNext()
-var Main::main()::stack	--[depends on variable]--> return JavaClass::getFields()
-var Main::main()::a3	--[depends on variable]--> var null
-var Main::main()::a1	--[depends on variable]--> var null
-var Main::main()::anInstruction	--[depends on variable]--> constant_0
-var Main::main()::instructionHandle	--[depends on variable]--> var null
-return System::getProperty() invocation_number_23	--[depends on]--> constant_true
-return System::getProperty() invocation_number_23	--[depends on]--> constant_skiperrors
-return Boolean::valueOf() invocation_number_24	--[depends on]--> return System::getProperty() invocation_number_23
+var ClassVisitor::visitJavaClass()::methods,return JavaClass::getMethods()
+ClassVisitor::visitJavaClass()::i,constant_0
+ClassVisitor::visitConstantPool()::i,constant_0
+var ClassVisitor::visitConstantPool()::constant,return ConstantPool::getConstant()
+var ClassVisitor::visitConstantPool()::referencedClass,return ConstantPool::constantToString()
+return String::format() invocation_number_0,new_array
+return String::format() invocation_number_0,constant_1
+var ClassVisitor::visitMethod()::mg,return MethodGen_<init>
+var ClassVisitor::visitMethod()::visitor,return MethodVisitor_<init>
+var MethodVisitor::start()::ih,return InstructionList::getStart()
+var MethodVisitor::start()::i,return InstructionHandle::getInstruction()
+var MethodVisitor::start()::ih,return InstructionHandle::getNext()
+MethodVisitor::visitInstruction()::opcode,return Instruction::getOpcode()
+return String::format() invocation_number_1,new_array
+return String::format() invocation_number_1,new_array
+return String::format() invocation_number_2,new_array
+return String::format() invocation_number_2,new_array
+return String::format() invocation_number_3,new_array
+return String::format() invocation_number_3,new_array
+return String::format() invocation_number_4,new_array
+return String::format() invocation_number_4,new_array
+Simple::main()::myLocalVariable3,constant_2222
+return Simple::voidMethod() invocation_number_5,var Simple::main()::myLocalVariable3
+Simple::main()::myMethodCallReturnValue,return Simple::voidMethod() invocation_number_5
+Main::main()::counter,constant_0
+var Main::main()::classFilePaths,return LinkedList_<init>
+var Main::main()::br,constant_null
+var Main::main()::br,return BufferedReader_<init>
+var Main::main()::line,return BufferedReader::readLine()
+var Main::main()::line,var null
+var Main::main()::e,return BufferedReader::close()
+var Main::main()::classFilePath,return IOException::printStackTrace()
+var Main::main()::e,return BufferedReader::close()
+var Main::main()::e,return BufferedReader::close()
+var Main::main()::br,constant_0
+var Main::main()::br,return LinkedList_<init>
+var Main::main()::line,return LinkedList_<init>
+var Main::main()::e,var null
+var Main::main()::classFilePath,var null
+return Paths::get() invocation_number_6,new_array
+return Paths::get() invocation_number_6,constant_0
+return Preconditions::checkNotNull() invocation_number_7,return Paths::get() invocation_number_6
+var Main::main()::classParser,return ClassParser_<init>
+return Preconditions::checkNotNull() invocation_number_8,var null
+return Preconditions::checkNotNull() invocation_number_9,return ClassParser::parse()
+var Main::main()::jc,return Preconditions::checkNotNull() invocation_number_9
+var Main::main()::jc,var null
+var Main::main()::e,var null
+var Main::main()::classFilePath,var null
+Main::main()::jc,constant_0
+var Main::main()::classParser,var null
+var Main::main()::cpg,return ConstantPoolGen_<init>
+var Main::main()::methodGen,return MethodGen_<init>
+var Main::main()::localVariableTable,return Method::getLocalVariableTable()
+var Main::main()::symbolTable,var null
+var Main::main()::stack,return Stack_<init>
+var Main::main()::instructionHandle,return InstructionList::getStart()
+var Main::main()::anInstruction,return InstructionHandle::getInstruction()
+var Main::main()::a1,return Stack::pop()
+var Main::main()::a3,return Stack::pop()
+var Main::main()::ret,constant_ret_add
+return String::valueOf() invocation_number_11,var null
+return String::valueOf() invocation_number_12,var null
+return String::valueOf() invocation_number_13,var null
+return String::valueOf() invocation_number_14,var null
+Main::main()::a1,return INVOKEVIRTUAL::getArgumentTypes()
+var Main::main()::a3,return INVOKEVIRTUAL::getClassName()
+var Main::main()::ret,return INVOKEVIRTUAL::getMethodName()
+var Main::main()::paramName,return Stack::pop()
+ret_add,constant_1
+ret_add,return String::lastIndexOf()
+var Main::main()::a1,return GETSTATIC::getFieldName()
+var Main::main()::a3,return JavaClass::getClassName()
+ret_add,constant_1
+ret_add,return String::lastIndexOf()
+var Main::main()::a1,return Type::toString()
+ret_add,constant_1
+ret_add,return String::lastIndexOf()
+Main::main()::a1,return ILOAD::getIndex()
+var Main::main()::a3,return LocalVariableTable::getLocalVariable()
+var Main::main()::ret,return JavaClass::getClassName()
+ret_add,constant_1
+ret_add,return String::lastIndexOf()
+Main::main()::a1,return ALOAD::getIndex()
+var Main::main()::a3,return LocalVariableTable::getLocalVariable()
+var Main::main()::ret,return LocalVariable::getName()
+var Main::main()::a1,return LocalVariableTable::getLocalVariable()
+var Main::main()::a3,return LocalVariable::getName()
+var Main::main()::ret,return Stack::pop()
+var Main::main()::paramName,return JavaClass::getClassName()
+ret_add,constant_1
+ret_add,return String::lastIndexOf()
+return String::valueOf() invocation_number_19,return String::substring()
+var Main::main()::left,return StringBuilder::toString()
+return String::valueOf() invocation_number_20,var null
+var Main::main()::a1,return LocalVariable::getName()
+var Main::main()::a3,return Stack::pop()
+var Main::main()::ret,return JavaClass::getClassName()
+ret_add,constant_1
+ret_add,return String::lastIndexOf()
+var Main::main()::paramName,return StringBuilder::toString()
+return String::valueOf() invocation_number_22,var null
+var Main::main()::a1,return PrintStream::println()
+var Main::main()::a1,return INVOKESTATIC::getClassName()
+Main::main()::a3,return INVOKESTATIC::getArgumentTypes()
+ret_add,constant_1
+ret_add,return String::lastIndexOf()
+var Main::main()::ret,return StringBuilder::toString()
+Main::main()::paramName,constant_0
+Main::main()::paramName,constant_1
+var Main::main()::left,return Stack::pop()
+return String::valueOf() invocation_number_25,var null
+return String::valueOf() invocation_number_26,var null
+var Main::main()::a1,return Stack::pop()
+Main::main()::a3,return INVOKESPECIAL::getArgumentTypes()
+var Main::main()::ret,return Stack::pop()
+var Main::main()::ret,return INVOKESPECIAL::getClassName()
+ret_add,constant_1
+ret_add,return String::lastIndexOf()
+var Main::main()::instructionHandle,return InstructionHandle::getNext()
+var Main::main()::stack,return JavaClass::getFields()
+var Main::main()::a3,var null
+Main::main()::a1,var null
+Main::main()::anInstruction,constant_0
+var Main::main()::instructionHandle,var null
+return System::getProperty() invocation_number_28,constant_true
+return System::getProperty() invocation_number_28,constant_skiperrors
+return Boolean::valueOf() invocation_number_29,return System::getProperty() invocation_number_28

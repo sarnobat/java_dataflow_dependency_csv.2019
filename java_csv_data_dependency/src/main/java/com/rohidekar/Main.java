@@ -82,7 +82,7 @@ public class Main {
         {
             Collection<JavaClass> javaClasses = new LinkedList<JavaClass>();
             for (String classFilePath : classFilePaths) {
-                System.out.println("Main.main() " + classFilePath);
+                System.err.println("Main.main() " + classFilePath);
                 ClassParser classParser = new ClassParser(
                         checkNotNull(Paths.get(classFilePath).toAbsolutePath().toString()));
                 try {
@@ -97,7 +97,7 @@ public class Main {
             for (JavaClass javaClass : javaClasses) {
                 System.err.println("Main.main() - 1) " + javaClass.getClassName());
                 if (javaClass.isEnum()) {
-                    System.out.println("Main.main() - [warn] skipping enum " + javaClass.getClassName());
+                    System.err.println("Main.main() - [warn] skipping enum " + javaClass.getClassName());
                     continue;
                 }
                 for (Method method : javaClass.getMethods()) {
@@ -357,8 +357,8 @@ public class Main {
                                     String className = javaClass.getClassName();
                                     String left = className.substring(className.lastIndexOf('.') + 1) + "::"
                                             + method.getName() + "()::" + variableName;
-                                    System.err
-                                            .println("var " + left + "\t--[depends on variable]--> " + stackExpression);
+//                                    System.err
+//                                            .println("var " + left + "\t--[depends on variable]--> " + stackExpression);
                                     System.out.println(left + "," + stackExpression);
                                 }
                             } else if (anInstruction instanceof ASTORE) {
@@ -389,7 +389,7 @@ public class Main {
                                         String className = javaClass.getClassName();
                                         String right = "var " + className.substring(className.lastIndexOf('.') + 1)
                                                 + "::" + method.getName() + "()::" + variableName;
-                                        System.err.println(right + "\t--[depends on variable]--> " + stackExpression);
+//                                        System.err.println(right + "\t--[depends on variable]--> " + stackExpression);
                                         System.out.println(right + "," + stackExpression);
                                     } catch (NullPointerException e) {
                                         if (skipErrors()) {
