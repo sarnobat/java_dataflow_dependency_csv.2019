@@ -22,6 +22,10 @@ import org.apache.bcel.generic.*;
  * 2018-12
  *
  * <p>
+ * 
+ * find $PWD -maxdepth 50 -type f -iname "**class" | java -classpath /Volumes/git/github/java_dataflow_dependency_csv/java_csv_data_dependency/target/java_csv_data_dependency-1.0-SNAPSHOT-jar-with-dependencies.jar  com.rohidekar.Main
+ * 
+ * 
  * usage: mvn exec:java -Dexec.args="$HOME/trash/myproj/target"
  *
  * <p>
