@@ -23,7 +23,9 @@ import org.apache.bcel.generic.*;
  *
  * <p>
  * 
- * find $PWD -maxdepth 50 -type f -iname "**class" | java -classpath /Volumes/git/github/java_dataflow_dependency_csv/java_csv_data_dependency/target/java_csv_data_dependency-1.0-SNAPSHOT-jar-with-dependencies.jar  com.rohidekar.Main
+ * find $PWD -maxdepth 50 -type f -iname "**class" | java -classpath
+ * /Volumes/git/github/java_dataflow_dependency_csv/java_csv_data_dependency/target/java_csv_data_dependency-1.0-SNAPSHOT-jar-with-dependencies.jar
+ * com.rohidekar.Main
  * 
  * 
  * usage: mvn exec:java -Dexec.args="$HOME/trash/myproj/target"
@@ -153,8 +155,10 @@ public class Main {
                                 String a3 = stack.pop();
                                 String ret = "ret_add";
                                 stack.push(ret);
-                                System.out.println(ret + " --[depends on]--> " + a1);
-                                System.out.println(ret + " --[depends on]--> " + a3);
+                                System.out.println(ret + "," + a1);
+                                System.out.println(ret + "," + a3);
+                                System.err.println(ret + " --[depends on]--> " + a1);
+                                System.err.println(ret + " --[depends on]--> " + a3);
                             } else if (anInstruction instanceof IF_ICMPLT) {
                                 System.err.println("  (unhandled) IF_ICMPLT");
                             } else if (anInstruction instanceof POP) {
@@ -353,8 +357,9 @@ public class Main {
                                     String className = javaClass.getClassName();
                                     String left = className.substring(className.lastIndexOf('.') + 1) + "::"
                                             + method.getName() + "()::" + variableName;
-                                    System.out
+                                    System.err
                                             .println("var " + left + "\t--[depends on variable]--> " + stackExpression);
+                                    System.out.println(left + "," + stackExpression);
                                 }
                             } else if (anInstruction instanceof ASTORE) {
 
@@ -382,9 +387,10 @@ public class Main {
                                                         + variableName);
                                         String stackExpression = stack.pop();
                                         String className = javaClass.getClassName();
-                                        System.out.println("var " + className.substring(className.lastIndexOf('.') + 1)
-                                                + "::" + method.getName() + "()::" + variableName
-                                                + "\t--[depends on variable]--> " + stackExpression);
+                                        String right = "var " + className.substring(className.lastIndexOf('.') + 1)
+                                                + "::" + method.getName() + "()::" + variableName;
+                                        System.err.println(right + "\t--[depends on variable]--> " + stackExpression);
+                                        System.out.println(right + "," + stackExpression);
                                     } catch (NullPointerException e) {
                                         if (skipErrors()) {
                                             System.err
@@ -417,7 +423,8 @@ public class Main {
                                     }
                                     String paramValue = stack.pop();
                                     // System.err.println("Main.main() paramValue = " + paramValue);
-                                    System.out.println(item + "\t--[depends on]--> " + paramValue);
+                                    System.err.println(item + "\t--[depends on]--> " + paramValue);
+                                    System.out.println(item + "," + paramValue);
                                     --length;
                                 }
                                 if (continu) {
