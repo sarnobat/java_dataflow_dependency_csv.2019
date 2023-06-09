@@ -21,7 +21,7 @@ import org.apache.bcel.generic.*;
 /**
  * 2018-12
  *
- * <p>usage: -Dexec.args="$HOME/trash/myproj/target"
+ * <p>usage: mvn exec:java -Dexec.args="$HOME/trash/myproj/target"
  *
  * <p>A lot of this may be achievable without this tool, but instead using: javap -verbose
  * $HOME/webservices/cmp/authentication-services/target/classes/com/mycompany/authentication/AuthorizationServlet.class
@@ -74,6 +74,7 @@ public class Main {
     {
       Collection<JavaClass> javaClasses = new LinkedList<JavaClass>();
       for (String classFilePath : classFilePaths) {
+          System.out.println("Main.main() " + classFilePath);
         ClassParser classParser =
             new ClassParser(checkNotNull(Paths.get(classFilePath).toAbsolutePath().toString()));
         try {
@@ -81,7 +82,7 @@ public class Main {
           javaClasses.add(jc);
         } catch (Exception e) {
           e.printStackTrace();
-          throw new RuntimeException(e);
+//          throw new RuntimeException(e);
         }
       }
 
