@@ -69,11 +69,11 @@ public class Main {
                         }
                     }
                 }
-                System.err.println("Main.main() No args, will try reading from stdin only");
+                System.err.println("[debug] Main.main() No args, will try reading from stdin only");
             } else {
                 // note it may not be the immediate parent of the class files (obviously?)
                 String dirContainingClasses = args[0];
-                System.err.println("Main.main() Has args, will try reading from stdin only");
+                System.err.println("[debug] Main.main() Has args, will try reading from stdin only");
             }
         }
 
@@ -82,7 +82,7 @@ public class Main {
         {
             Collection<JavaClass> javaClasses = new LinkedList<JavaClass>();
             for (String classFilePath : classFilePaths) {
-                System.err.println("Main.main() " + classFilePath);
+                System.err.println("[debug] Main.main() " + classFilePath);
                 ClassParser classParser = new ClassParser(
                         checkNotNull(Paths.get(classFilePath).toAbsolutePath().toString()));
                 try {
@@ -95,9 +95,9 @@ public class Main {
             }
 
             for (JavaClass javaClass : javaClasses) {
-                System.err.println("Main.main() - 1) " + javaClass.getClassName());
+                System.err.println("[debug] Main.main() - 1) " + javaClass.getClassName());
                 if (javaClass.isEnum()) {
-                    System.err.println("Main.main() - [warn] skipping enum " + javaClass.getClassName());
+                    System.err.println("[debug] Main.main() - [warn] skipping enum " + javaClass.getClassName());
                     continue;
                 }
                 for (Method method : javaClass.getMethods()) {
@@ -111,7 +111,7 @@ public class Main {
                         }
                     }
                     LocalVariableTable symbolTable = localVariableTable;
-                    System.err.println("Main.main() - 2) " + javaClass.getClassName() + " :: " + method.getName()
+                    System.err.println("[debug] Main.main() - 2) " + javaClass.getClassName() + " :: " + method.getName()
                             + "() - " + methodGen.getInstructionList().size() + " instructions");
                     // -----------------------------------------------------------------
                     // main bit
@@ -126,10 +126,8 @@ public class Main {
                                 .getStart(); instructionHandle != null; instructionHandle = instructionHandle
                                         .getNext()) {
                             Instruction anInstruction = instructionHandle.getInstruction();
-                            System.err.println("Main.main()" + "    stack contents: " + stack.size()
-                            // + "\t"
-                            // + anInstruction.getClass().getSimpleName()
-                                    + "\t" + stack);
+                            System.err.println("[debug] Main.main()" + "    stack contents: " + stack.size() + "\t" + stack);
+                            System.err.println("[debug] Main.main() : class: " + anInstruction.getClass().getSimpleName());
                             if (anInstruction instanceof AASTORE) {
                                 System.err.println(" (unhandled) AASTORE");
                                 stack.pop();
@@ -188,15 +186,15 @@ public class Main {
                                 int argCount = ((INVOKEVIRTUAL) anInstruction).getArgumentTypes(cpg).length;
                                 String className = ((INVOKEVIRTUAL) anInstruction).getClassName(cpg);
                                 String methodName = ((INVOKEVIRTUAL) anInstruction).getMethodName(cpg);
-                                System.err.println("  (unhandled) INVOKEVIRTUAL " + className + "::" + methodName + "("
+                                System.err.println("[debug]  (unhandled) INVOKEVIRTUAL " + className + "::" + methodName + "("
                                         + argCount + ")");
 
                                 while (argCount > 0) {
                                     --argCount;
                                     String paramName = stack.pop();
-                                    System.err.println("Main.main() paramName = " + paramName);
+                                    System.err.println("[debug] Main.main() paramName = " + paramName);
                                 }
-                                stack.push("return " + className.substring(className.lastIndexOf('.') + 1) + "::"
+                                stack.push("return_value_" + className.substring(className.lastIndexOf('.') + 1) + "::"
                                         + methodName + "()");
                             } else if (anInstruction instanceof ICONST) {
                                 System.err.println("  (unhandled) " + javaClass.getClassName() + "::" + method.getName()
@@ -286,7 +284,7 @@ public class Main {
                                         + "()\tGOTO (goes to another instruction at branchoffset): " + anInstruction);
                             } else if (anInstruction instanceof ILOAD) {
                                 int variableIndex = ((ILOAD) anInstruction).getIndex();
-                                System.err.println("Main.main() " + localVariableTable);
+                                System.err.println("[debug] Main.main() " + localVariableTable);
                                 if (localVariableTable == null) {
                                     System.err.println(
                                             "  (unhandled) " + javaClass.getClassName() + "::" + method.getName()
@@ -305,9 +303,9 @@ public class Main {
                                         }
                                     }
                                     String className = javaClass.getClassName();
-                                    stack.push("var " + className.substring(className.lastIndexOf('.') + 1) + "::"
+                                    stack.push("local_variable_inside_" + className.substring(className.lastIndexOf('.') + 1) + "::"
                                             + method.getName() + "()::" + variable.getName());
-                                    System.err.println("Main.main() just pushed onto stack (" + variableIndex + "): "
+                                    System.err.println("[debug] Main.main() just pushed onto stack (" + variableIndex + "): "
                                             + variable.getName());
                                 }
                             } else if (anInstruction instanceof ALOAD) {
@@ -322,7 +320,7 @@ public class Main {
                                     String string = variable == null ? "null" : variable.getName();
                                     stack.push("var " + string);
                                     System.err.println(
-                                            "Main.main() just pushed onto stack (" + variableIndex + "): " + string);
+                                            "[debug] Main.main() just pushed onto stack (" + variableIndex + "): " + string);
                                 }
                             } else if (anInstruction instanceof ISTORE) {
 
@@ -351,15 +349,15 @@ public class Main {
                                         }
                                     }
                                     String variableName = localVariable.getName();
-                                    System.err.println("Main.main() ISTORE (store int value into variable #index "
+                                    System.err.println("[debug] Main.main() ISTORE (store int value into variable #index "
                                             + "): Declared and assigned variable:  " + variableName);
                                     String stackExpression = stack.pop();
                                     String className = javaClass.getClassName();
                                     String left = className.substring(className.lastIndexOf('.') + 1) + "::"
-                                            + method.getName() + "()::" + variableName;
+                                            + method.getName() + "()::local_variable_inside_" + variableName;
 //                                    System.err
 //                                            .println("var " + left + "\t--[depends on variable]--> " + stackExpression);
-                                    System.out.println(left + "," + stackExpression);
+                                    System.out.println("[out.csv] [istore.csv] " + left + "," + stackExpression);
                                 }
                             } else if (anInstruction instanceof ASTORE) {
 
@@ -383,38 +381,41 @@ public class Main {
                                         String variableName = localVariableTable
                                                 .getLocalVariable(((ASTORE) anInstruction).getIndex()).getName();
                                         System.err.println(
-                                                "Main.main() ASTORE (store a reference into a local variable #index): Declared and assigned variable:  "
+                                                "[debug] Main.main() ASTORE (store a reference into a local variable #index): Declared and assigned variable:  "
                                                         + variableName);
                                         String stackExpression = stack.pop();
                                         String className = javaClass.getClassName();
                                         String right = "var " + className.substring(className.lastIndexOf('.') + 1)
                                                 + "::" + method.getName() + "()::" + variableName;
 //                                        System.err.println(right + "\t--[depends on variable]--> " + stackExpression);
-                                        System.out.println(right + "," + stackExpression);
+                                        System.out.println("[out.csv] [astore.csv] " + right + "," + stackExpression);
                                     } catch (NullPointerException e) {
                                         if (skipErrors()) {
                                             System.err
-                                                    .println("Main.main() [warn] skipping error for " + anInstruction);
+                                                    .println("[debug] Main.main() [warn] skipping error for " + anInstruction);
                                             continue;
                                         }
                                     }
                                 }
                             } else if (anInstruction instanceof INVOKESTATIC) {
                                 String className = ((INVOKESTATIC) anInstruction).getClassName(cpg);
-                                System.err.println("  (unhandled) " + javaClass.getClassName() + "::" + method.getName()
-                                        + "()\t--[calls]-->\t" + className + "::"
-                                        + ((INVOKESTATIC) anInstruction).getMethodName(cpg) + "() "
+
+                                String caller = javaClass.getClassName() + "::" + method.getName() + "()";
+                                String callee = className + "::" + ((INVOKESTATIC) anInstruction).getMethodName(cpg)
+                                        + "()";
+
+                                System.err.println("  (unhandled) " + caller + "\t--[calls]-->\t" + callee + " "
                                         // + anInstruction
                                         + " INVOKESTATIC (invoke a static method and puts the result on the stack (might be void); the method is identified by method reference index in constant pool): ");
-                                int length = ((INVOKESTATIC) anInstruction).getArgumentTypes(cpg).length;
-                                String item = "return " + className.substring(className.lastIndexOf('.') + 1) + "::"
-                                        + ((INVOKESTATIC) anInstruction).getMethodName(cpg) + "() invocation_number_"
+                                int lengthOfCalleeArgs = ((INVOKESTATIC) anInstruction).getArgumentTypes(cpg).length;
+                                String item = "return_value_from_" + className.substring(className.lastIndexOf('.') + 1) + "::"
+                                        + ((INVOKESTATIC) anInstruction).getMethodName(cpg) + "()_invocation_number_"
                                         + counter;
                                 ++counter;
-                                // TODO: I'm not sure we should be popping EVERYTHING off the stack shoudl we?
+                                // TODO: I'm not sure we should be popping EVERYTHING off the stack should we?
                                 // Or maybe we should. To be determined.
                                 boolean continu = false;
-                                while (length > 0) {
+                                while (lengthOfCalleeArgs > 0) {
                                     if (stack.size() == 0) {
                                         if (skipErrors()) {
                                             continu = true;
@@ -422,10 +423,10 @@ public class Main {
                                         }
                                     }
                                     String paramValue = stack.pop();
-                                    // System.err.println("Main.main() paramValue = " + paramValue);
+                                    // System.err.println("[debug] Main.main() paramValue = " + paramValue);
                                     System.err.println(item + "\t--[depends on]--> " + paramValue);
-                                    System.out.println(item + "," + paramValue);
-                                    --length;
+                                    System.out.println("[out.csv] [invoke_static.csv] " + item + "," + paramValue);
+                                    --lengthOfCalleeArgs;
                                 }
                                 if (continu) {
                                     continue;
@@ -438,12 +439,12 @@ public class Main {
                                         + ((INVOKESPECIAL) anInstruction).getMethodName(cpg) + "() ");
 
                                 String paramValue1 = stack.pop();
-                                System.err.println("Main.main() popped instance reference\t" + paramValue1);
+                                System.err.println("[debug] Main.main() popped instance reference\t" + paramValue1);
 
                                 int length = ((INVOKESPECIAL) anInstruction).getArgumentTypes(cpg).length;
                                 while (length > 0) {
                                     String paramValue = stack.pop();
-                                    System.err.println("Main.main() popping parameter\t\t" + paramValue);
+                                    System.err.println("[debug] Main.main() popping parameter\t\t" + paramValue);
                                     --length;
                                 }
 
@@ -539,7 +540,7 @@ public class Main {
     }
 
     private static boolean skipErrors() {
-        return Boolean.valueOf(System.getProperty("skiperrors", "true"));
-//        return System.getProperties().containsKey("skiperrors");
+//        return Boolean.valueOf(System.getProperty("skiperrors", "true"));
+        return Boolean.valueOf(System.getProperty("skiperrors", "false"));
     }
 }

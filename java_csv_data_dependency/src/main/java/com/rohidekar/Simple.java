@@ -8,12 +8,12 @@ public class Simple {
 
   public static void main(String[] args) {
     int myLocalVariable3 = 2222;//voidMethod(11111111);
-    int myMethodCallReturnValue = voidMethod(myLocalVariable3);
-//    int g = voidMethod(f);
-//    System.out.println(g);
+    int myMethodCallReturnValue = helperMethod(myLocalVariable3);
+    int g = helperMethod(myLocalVariable3);
+//    System.out.println(myLocalVariable3);
   }
 
-  private static int voidMethod(int myParam1) {
+  private static int helperMethod(int myParam1) {
 	  return myParam1;
   }
 }
