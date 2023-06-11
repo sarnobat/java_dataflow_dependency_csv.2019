@@ -3,3 +3,8 @@
 [out.csv] [istore.csv] Simple::main()::local_variable_inside_myMethodCallReturnValue,return_value_from_Simple::helperMethod()_invocation_number_0
 [out.csv] [invoke_static.csv] return_value_from_Simple::helperMethod()_invocation_number_1,local_variable_inside_Simple::main()::myLocalVariable3
 [out.csv] [istore.csv] Simple::main()::local_variable_inside_g,return_value_from_Simple::helperMethod()_invocation_number_1
+[out.csv] [astore.csv] local_variable_Simple::main()::myString1,constant_foo
+[out.csv] [astore.csv] local_variable_Simple::main()::myString2,constant_bar
+[out.csv] [invoke_static.csv] return_value_from_String::valueOf()_invocation_number_2,local_variable_inside_com.rohidekar.Simple::main()_null
+[out.csv] [astore.csv] local_variable_Simple::main()::mystring3,return_value_from_StringBuilder::toString()
+[out.csv] [astore.csv] local_variable_Simple::main()::mystring4,return Simple$Person_<init>
