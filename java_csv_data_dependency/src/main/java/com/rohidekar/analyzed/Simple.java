@@ -14,7 +14,7 @@ public class Simple {
 //    String myString2 = "bar";
 //    String mystring3 = myString1 + myString2;
     Person person = new Person();
-    int myInt = person.age;
+//    int myInt = person.age;
 //    System.out.println(myInt);
   }
 
@@ -27,9 +27,9 @@ public class Simple {
     public int age;
     Person() {
 //        String aName = "John Smith";
-        System.out.println("Simple.Person.Person()");
-        int age1 = 11;
-        this.age = age1;
+//        System.out.println("Simple.Person.Person()");
+//        int age1 = 11;
+        this.age = 333333;
 //        fullName = aName;
     }
   }

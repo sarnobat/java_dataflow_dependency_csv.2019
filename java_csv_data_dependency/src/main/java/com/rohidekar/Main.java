@@ -232,7 +232,6 @@ public class Main {
                                 Number value = ((BIPUSH) anInstruction).getValue();
                                 System.err.println("Main.main() BIPUSH (byte push onto stack): " + value);
                                 stackState.push("constant_" + value);
-                                throw new RuntimeException("PICKUP");
                             } else if (anInstruction instanceof ACONST_NULL) {
                                 unhandled( "" + javaClass.getClassName() + "::" + method.getName()
                                         + "()\t" + anInstruction);
@@ -558,7 +557,13 @@ public class Main {
                             } else if (anInstruction instanceof NEWARRAY) {
                                 unhandled( "NEWARRAY");
                             } else if (anInstruction instanceof PUTFIELD) {
-                                unhandled( "PUTFIELD");
+//                                unhandled( "PUTFIELD");
+                                PUTFIELD putfield = (PUTFIELD) anInstruction;
+                                
+                                String fieldName = putfield.getClassName(cpg) + "::" + putfield.getFieldName(cpg);
+                                String value = stackState.pop();
+                                System.out.println("[out.csv] [putfield.csv] " + fieldName + "," + value);
+                                System.err.println("[debug] Main.main() PUTFIELD field name = " + fieldName);
                             } else if (anInstruction instanceof LSTORE) {
                                 unhandled( "LSTORE");
                             } else if (anInstruction instanceof I2L) {
