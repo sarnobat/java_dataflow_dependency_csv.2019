@@ -174,8 +174,8 @@ public class Main {
                                 String a3 = stackState.pop();
                                 String ret = "ret_add";
                                 stackState.push(ret);
-                                System.out.println(ret + "," + a1);
-                                System.out.println(ret + "," + a3);
+                                System.out.println("[out.csv] [iadd.csv] " + ret + "," + a1);
+                                System.out.println("[out.csv] [iadd.csv] " + ret + "," + a3);
                                 System.err.println(ret + " --[depends on]--> " + a1);
                                 System.err.println(ret + " --[depends on]--> " + a3);
                             } else if (anInstruction instanceof IF_ICMPLT) {

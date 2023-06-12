@@ -1,8 +1,0 @@
-[debug] Main.main() index aload_0
-[debug] Main.main() stack top popped = return Simple$Person_<init>
-[debug] Main.main() name = astore_1
-[debug] Main.main() 
-[debug] Main.main() index aload_1
-[debug] Main.main() stack top popped = address_Simple::main()::astore_1
-[debug] Main.main() name = astore_2
-[debug] Main.main() 
