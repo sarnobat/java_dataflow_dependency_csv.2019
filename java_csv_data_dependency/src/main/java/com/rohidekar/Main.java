@@ -141,7 +141,7 @@ public class Main {
                                 stackState.pop();
                                 stackState.pop();
                             } else if (anInstruction instanceof ATHROW) {
-                                System.err.println("  (unhandled) " + "ATHROW");
+                                unhandled( "ATHROW");
                             } else if (anInstruction instanceof GETFIELD) {
                                 GETFIELD field = (GETFIELD)anInstruction;
                                 printStack("[debug] Main.main() GETFIELD before consume", stackState);
@@ -155,20 +155,20 @@ public class Main {
                                 String value = field.toString();
                                 printTable(localVariableTable);
                                 String name = field.getClassName(cpg) + "::" + field.getName(cpg);
-//                                System.err.println("  (unhandled) " + "GETFIELD " +  name + " = " + value);
+//                                unhandled( "GETFIELD " +  name + " = " + value);
                                 System.out.println("[out.csv] [getfield.csv] " +  name + "," + a );                                
                             } else if (anInstruction instanceof CHECKCAST) {
-                                System.err.println("  (unhandled) " + "CHECKCAST");
+                                unhandled( "CHECKCAST");
                             } else if (anInstruction instanceof IF_ICMPEQ) {
-                                System.err.println("  (unhandled) " + "IF_ICMPEQ");
+                                unhandled( "IF_ICMPEQ");
                             } else if (anInstruction instanceof IF_ICMPNE) {
-                                System.err.println("  (unhandled) " + "IF_ICMPNE");
+                                unhandled( "IF_ICMPNE");
                             } else if (anInstruction instanceof IF_ICMPGE) {
-                                System.err.println("  (unhandled) " + "IF_ICMPGE");
+                                unhandled( "IF_ICMPGE");
                             } else if (anInstruction instanceof IFLE) {
-                                System.err.println("  (unhandled) " + "IFLE");
+                                unhandled( "IFLE");
                             } else if (anInstruction instanceof IADD) {
-                                System.err.println("  (unhandled) " + "IADD");
+                                unhandled( "IADD");
                                 String a1 = stackState.pop();
                                 String a3 = stackState.pop();
                                 String ret = "ret_add";
@@ -178,29 +178,29 @@ public class Main {
                                 System.err.println(ret + " --[depends on]--> " + a1);
                                 System.err.println(ret + " --[depends on]--> " + a3);
                             } else if (anInstruction instanceof IF_ICMPLT) {
-                                System.err.println("  (unhandled) " + "IF_ICMPLT");
+                                unhandled( "IF_ICMPLT");
                             } else if (anInstruction instanceof POP) {
-                                System.err.println("  (unhandled) " + "POP");
+                                unhandled( "POP");
                                 stackState.pop();
                             } else if (anInstruction instanceof POP2) {
-                                System.err.println("  (unhandled) " + "POP2");
+                                unhandled( "POP2");
                                 stackState.pop();
                             } else if (anInstruction instanceof IFNE) {
-                                System.err.println("  (unhandled) " + "IFNE");
+                                unhandled( "IFNE");
                             } else if (anInstruction instanceof IFNULL) {
-                                System.err.println("  (unhandled) " + "IFNULL");
+                                unhandled( "IFNULL");
                             } else if (anInstruction instanceof IFEQ) {
-                                System.err.println("  (unhandled) " + "IFEQ");
+                                unhandled( "IFEQ");
                             } else if (anInstruction instanceof IINC) {
-                                System.err.println("  (unhandled) " + "IINC");
+                                unhandled( "IINC");
                             } else if (anInstruction instanceof INSTANCEOF) {
-                                System.err.println("  (unhandled) " + "INSTANCEOF");
+                                unhandled( "INSTANCEOF");
                             } else if (anInstruction instanceof INVOKEINTERFACE) {
-                                System.err.println("  (unhandled) " + "INVOKEINTERFACE");
+                                unhandled( "INVOKEINTERFACE");
                             } else if (anInstruction instanceof AALOAD) {
-                                System.err.println("  (unhandled) " + "AALOAD");
+                                unhandled( "AALOAD");
                             } else if (anInstruction instanceof ARRAYLENGTH) {
-                                System.err.println("  (unhandled) " + "ARRAYLENGTH");
+                                unhandled( "ARRAYLENGTH");
                             } else if (anInstruction instanceof INVOKEVIRTUAL) {
                                 // A method call
                                 int argCount = ((INVOKEVIRTUAL) anInstruction).getArgumentTypes(cpg).length;
@@ -217,25 +217,25 @@ public class Main {
                                 stackState.push("return_value_from_" + className.substring(className.lastIndexOf('.') + 1) + "::"
                                         + methodName + "()");
                             } else if (anInstruction instanceof ICONST) {
-                                System.err.println("  (unhandled) " + "" + javaClass.getClassName() + "::" + method.getName()
+                                unhandled( "" + javaClass.getClassName() + "::" + method.getName()
                                         + "()\tICONST = " + anInstruction);
                                 stackState.push("constant_" + ((ICONST) anInstruction).getValue());
                             } else if (anInstruction instanceof SIPUSH) {
-                                System.err.println("  (unhandled) " + "" + javaClass.getClassName() + "::" + method.getName()
+                                unhandled( "" + javaClass.getClassName() + "::" + method.getName()
                                         + "()\tSIPUSH = " + anInstruction);
                                 stackState.push("constant_" + ((SIPUSH) anInstruction).getValue());
                             } else if (anInstruction instanceof BIPUSH) {
-                                System.err.println("  (unhandled) " + "" + javaClass.getClassName() + "::" + method.getName()
+                                unhandled( "" + javaClass.getClassName() + "::" + method.getName()
                                         + "()\tBIPUSH = " + anInstruction);
                                 String name = ((BIPUSH)anInstruction).getName();
                                 stackState.push("constant_" + ((BIPUSH) anInstruction).getValue());
                                 throw new RuntimeException("PICKUP");
                             } else if (anInstruction instanceof ACONST_NULL) {
-                                System.err.println("  (unhandled) " + "" + javaClass.getClassName() + "::" + method.getName()
+                                unhandled( "" + javaClass.getClassName() + "::" + method.getName()
                                         + "()\t" + anInstruction);
                                 stackState.push("constant_null");
                             } else if (anInstruction instanceof ARETURN) {
-                                System.err.println("  (unhandled) " + "" + javaClass.getClassName() + "::" + method.getName()
+                                unhandled( "" + javaClass.getClassName() + "::" + method.getName()
                                         + "()\treturn "
                                         + ((ARETURN) anInstruction).toString(javaClass.getConstantPool())
                                         + ";\tARETURN reference (return a reference from a method) ");
@@ -246,7 +246,7 @@ public class Main {
                                     // throw new RuntimeException(stack.toString());
                                 }
                             } else if (anInstruction instanceof IRETURN) {
-                                System.err.println("  (unhandled) " + "" + javaClass.getClassName() + "::" + method.getName()
+                                unhandled( "" + javaClass.getClassName() + "::" + method.getName()
                                         + "()\treturn "
                                         + ((IRETURN) anInstruction).toString(javaClass.getConstantPool())
                                         + ";\tIRETURN reference (return a reference/address from a method) ");
@@ -259,13 +259,13 @@ public class Main {
                             } else if (anInstruction instanceof DUP) {
                                 DUP copy = (DUP) anInstruction;
                                 
-                                System.err.println("  (unhandled) " + "DUP " + javaClass.getClassName() + "::" + method.getName()
-                                        + "()\t" + stackState.peek() + "\tDUP\t(duplicate the value on top of the stack, and push it onto the stack) " + copy.getName());
+//                                unhandled( "DUP " + javaClass.getClassName() + "::" + method.getName()
+//                                        + "()\t" + stackState.peek() + "\tDUP\t(duplicate the value on top of the stack, and push it onto the stack) " + copy.getName());
                                 printStack("[debug] Main.main() DUP stack before ", stackState);
                                 stackState.push(stackState.peek());
                                 printStack("[debug] Main.main() DUP stack after ", stackState);
                             } else if (anInstruction instanceof GETSTATIC) {
-//                                System.err.println("  (unhandled) " + "" + javaClass.getClassName() + "::" + method.getName()
+//                                unhandled( "" + javaClass.getClassName() + "::" + method.getName()
 //                                        + "()\t... = " + ((GETSTATIC) anInstruction).getFieldName(cpg)
 //                                        + ";\tGETSTATIC\t(get a static field value of a class, where the field is identified by field reference in the constant pool index): ");
                                 String fieldName = ((GETSTATIC) anInstruction).getFieldName(cpg);
@@ -274,10 +274,10 @@ public class Main {
                                         + method.getName() + "_" + fieldName); // confirmed
                             } else if (anInstruction instanceof NEW) {
                                 NEW constructorCall = (NEW) anInstruction;
-                                System.err.println("  (unhandled) " + "" + javaClass.getClassName() + "::" + method.getName()
-                                        + "()\t"
-                                        + ("new_object_of_type_" + constructorCall.getType(cpg)
-                                                                                + "()") + ";\tNEW\t(create new object of type identified by class reference in constant pool index) ");
+//                                unhandled( "" + javaClass.getClassName() + "::" + method.getName()
+//                                        + "()\t"
+//                                        + ("new_object_of_type_" + constructorCall.getType(cpg)
+//                                                                                + "()") + ";\tNEW\t(create new object of type identified by class reference in constant pool index) ");
                                 String fullClassName = ((NEW) anInstruction).getType(cpg).toString();
                                 
                                 String constructorName = "new_object_of_type_"
@@ -312,12 +312,12 @@ public class Main {
                                 
                                 stackState.push(constructorName);
                             } else if (anInstruction instanceof ANEWARRAY) {
-                                System.err.println("  (unhandled) " + "" + javaClass.getClassName() + "::" + method.getName()
+                                unhandled( "" + javaClass.getClassName() + "::" + method.getName()
                                         + "()\tnew " + ((ANEWARRAY) anInstruction).getType(cpg)
                                         + "();\tANEWARRAY\t(create new object of type identified by class reference in constant pool index) ");
                                 stackState.push("new_array");
                             } else if (anInstruction instanceof PUTSTATIC) {
-                                System.err.println("  (unhandled) " + "" + javaClass.getClassName() + "::" + method.getName()
+                                unhandled( "" + javaClass.getClassName() + "::" + method.getName()
                                         + "()\t" + ((PUTSTATIC) anInstruction).getFieldName(cpg)
                                         + " = ...;\tPUTSTATIC\t(set static field to value in a class, where the field is identified by a field reference index in constant pool): ");
                                 if (stackState.isEmpty()) {
@@ -328,17 +328,19 @@ public class Main {
                                 stackState.pop(); // confirmed
                                 System.err.println();
                             } else if (anInstruction instanceof RETURN) {
-                                System.err.println("  (unhandled) " + "" + javaClass.getClassName() + "::" + method.getName()
-                                        + "()\treturn;\tRETURN\t(return void from method)");
+//                                unhandled( "" + javaClass.getClassName() + "::" + method.getName()
+//                                        + "()\treturn;\tRETURN\t(return void from method)");
                                 // No stack pop for returning from a void method
                                 // Actually, yes there is. I checked the stack. But should I do it here or leave
                                 // it to the caller?
+                                System.err.println("[warn] Main.main() - TODO: I think we need to pop from the stack. But should I do it here or leave  it to the caller?" + javaClass.getClassName() + "::" + method.getName()
+                                + "()\treturn;\tRETURN\t(return void from method)");
                             } else if (anInstruction instanceof IFNONNULL) {
-                                System.err.println("  (unhandled) " + "" + javaClass.getClassName() + "::" + method.getName()
+                                unhandled( "" + javaClass.getClassName() + "::" + method.getName()
                                         + "()\t" + anInstruction);
                                 stackState.pop();
                             } else if (anInstruction instanceof GOTO) {
-                                System.err.println("  (unhandled) " + "" + javaClass.getClassName() + "::" + method.getName()
+                                unhandled( "" + javaClass.getClassName() + "::" + method.getName()
                                         + "()\tGOTO (goes to another instruction at branchoffset): " + anInstruction);
                             } else if (anInstruction instanceof ILOAD) {
                                 int variableIndex = ((ILOAD) anInstruction).getIndex();
@@ -402,7 +404,7 @@ public class Main {
                                 }
                             } else if (anInstruction instanceof ISTORE) {
 
-//                                System.err.println("  (unhandled) " + "ISTORE");
+//                                unhandled( "ISTORE");
 
                                 if (stackState.empty()) {
                                     if (skipErrors()) {
@@ -440,7 +442,7 @@ public class Main {
                                 }
                             } else if (anInstruction instanceof ASTORE) {
 
-                                System.err.println("  (unhandled) " + "ASTORE");
+                                unhandled( "ASTORE");
 
                                 if (stackState.empty()) {
                                     if (skipErrors()) {
@@ -488,7 +490,7 @@ public class Main {
                                 String callee = className + "::" + ((INVOKESTATIC) anInstruction).getMethodName(cpg)
                                         + "()";
 
-                                System.err.println("  (unhandled) " + "" + caller + "\t--[calls]-->\t" + callee + " "
+                                unhandled( "" + caller + "\t--[calls]-->\t" + callee + " "
                                         // + anInstruction
                                         + " INVOKESTATIC (invoke a static method and puts the result on the stack (might be void); the method is identified by method reference index in constant pool): ");
                                 int lengthOfCalleeArgs = ((INVOKESTATIC) anInstruction).getArgumentTypes(cpg).length;
@@ -517,87 +519,89 @@ public class Main {
                                 }
                                 stackState.push(item);
                             } else if (anInstruction instanceof INVOKESPECIAL) {
-//                                System.err.println("  (unhandled) " + "INVOKESPECIAL " + javaClass.getClassName() + "::"
+//                                unhandled( "INVOKESPECIAL " + javaClass.getClassName() + "::"
 //                                        + method.getName() + "()\t--[calls]-->\t"
 //                                        + ((INVOKESPECIAL) anInstruction).getClassName(cpg) + "::"
 //                                        + ((INVOKESPECIAL) anInstruction).getMethodName(cpg) + "() ");
-
+                                INVOKESPECIAL invokespecial = (INVOKESPECIAL) anInstruction;
+                                String className = ((INVOKESPECIAL) anInstruction).getClassName(cpg);
+                                String methodName = ((INVOKESPECIAL) anInstruction).getMethodName(cpg);
+                                System.err.println("[debug] Main.main() INVOKESPECIAL - " + className + "::" + methodName +"()");
                                 String paramValue1 = stackState.pop();
 //                                System.err.println("[debug] Main.main() popped instance reference\t" + paramValue1);
 
-                                int length = ((INVOKESPECIAL) anInstruction).getArgumentTypes(cpg).length;
+                                int length = invokespecial.getArgumentTypes(cpg).length;
                                 while (length > 0) {
                                     String paramValue = stackState.pop();
 //                                    System.err.println("[debug] Main.main() popping parameter\t\t" + paramValue);
                                     --length;
                                 }
 
-                                String className = ((INVOKESPECIAL) anInstruction).getClassName(cpg);
                                 stackState.push("return " + className.substring(className.lastIndexOf('.') + 1) + "_"
-                                        + ((INVOKESPECIAL) anInstruction).getMethodName(cpg));
+                                        + methodName);
                             } else if (anInstruction instanceof LDC) {
                                 stackState.push("constant_" + ((LDC) anInstruction).getValue(cpg).toString());
                                 System.err.println();
                             } else if (anInstruction instanceof NEWARRAY) {
-                                System.err.println("  (unhandled) " + "NEWARRAY");
+                                unhandled( "NEWARRAY");
                             } else if (anInstruction instanceof PUTFIELD) {
-                                System.err.println("  (unhandled) " + "PUTFIELD");
+                                unhandled( "PUTFIELD");
                             } else if (anInstruction instanceof LSTORE) {
-                                System.err.println("  (unhandled) " + "LSTORE");
+                                unhandled( "LSTORE");
                             } else if (anInstruction instanceof I2L) {
-                                System.err.println("  (unhandled) " + "I2L");
+                                unhandled( "I2L");
                             } else if (anInstruction instanceof LDC2_W) {
-                                System.err.println("  (unhandled) " + "LDC2_W");
+                                unhandled( "LDC2_W");
                             } else if (anInstruction instanceof LLOAD) {
-                                System.err.println("  (unhandled) " + "LLOAD");
+                                unhandled( "LLOAD");
                             } else if (anInstruction instanceof LMUL) {
-                                System.err.println("  (unhandled) " + "LMUL");
+                                unhandled( "LMUL");
                             } else if (anInstruction instanceof LSUB) {
-                                System.err.println("  (unhandled) " + "LSUB");
+                                unhandled( "LSUB");
                             } else if (anInstruction instanceof LADD) {
-                                System.err.println("  (unhandled) " + "LADD");
+                                unhandled( "LADD");
                             } else if (anInstruction instanceof LRETURN) {
-                                System.err.println("  (unhandled) " + "LRETURN");
+                                unhandled( "LRETURN");
                             } else if (anInstruction instanceof IFLT) {
-                                System.err.println("  (unhandled) " + "IFLT");
+                                unhandled( "IFLT");
                             } else if (anInstruction instanceof LCMP) {
-                                System.err.println("  (unhandled) " + "LCMP");
+                                unhandled( "LCMP");
                             } else if (anInstruction instanceof IFGT) {
-                                System.err.println("  (unhandled) " + "IFGT");
+                                unhandled( "IFGT");
                             } else if (anInstruction instanceof LDIV) {
-                                System.err.println("  (unhandled) " + "LDIV");
+                                unhandled( "LDIV");
                             } else if (anInstruction instanceof IFGE) {
-                                System.err.println("  (unhandled) " + "IFGE");
+                                unhandled( "IFGE");
                             } else if (anInstruction instanceof IF_ACMPNE) {
-                                System.err.println("  (unhandled) " + "IF_ACMPNE");
+                                unhandled( "IF_ACMPNE");
                             } else if (anInstruction instanceof ISTORE) {
-                                System.err.println("  (unhandled) " + "ISTORE");
+                                unhandled( "ISTORE");
                             } else if (anInstruction instanceof IALOAD) {
-                                System.err.println("  (unhandled) " + "IALOAD");
+                                unhandled( "IALOAD");
                             } else if (anInstruction instanceof IF_ICMPLE) {
-                                System.err.println("  (unhandled) " + "IF_ICMPLE");
+                                unhandled( "IF_ICMPLE");
                             } else if (anInstruction instanceof ISUB) {
-                                System.err.println("  (unhandled) " + "ISUB");
+                                unhandled( "ISUB");
                             } else if (anInstruction instanceof IOR) {
-                                System.err.println("  (unhandled) " + "IOR");
+                                unhandled( "IOR");
                             } else if (anInstruction instanceof IASTORE) {
-                                System.err.println("  (unhandled) " + "IASTORE");
+                                unhandled( "IASTORE");
                             } else if (anInstruction instanceof DUP2) {
-                                System.err.println("  (unhandled) " + "DUP2");
+                                unhandled( "DUP2");
                             } else if (anInstruction instanceof LOOKUPSWITCH) {
-                                System.err.println("  (unhandled) " + "LOOKUPSWITCH");
+                                unhandled( "LOOKUPSWITCH");
                             } else if (anInstruction instanceof TABLESWITCH) {
-                                System.err.println("  (unhandled) " + "TABLESWITCH");
+                                unhandled( "TABLESWITCH");
                             } else if (anInstruction instanceof INEG) {
-                                System.err.println("  (unhandled) " + "INEG");
+                                unhandled( "INEG");
                             } else if (anInstruction instanceof LCONST) {
-                                System.err.println("  (unhandled) " + "LCONST");
+                                unhandled( "LCONST");
                             } else if (anInstruction instanceof MONITORENTER) {
-                                System.err.println("  (unhandled) " + "MONITORENTER");
+                                unhandled( "MONITORENTER");
                             } else if (anInstruction instanceof MONITOREXIT) {
-                                System.err.println("  (unhandled) " + "MONITOREXIT");
+                                unhandled( "MONITOREXIT");
                             } else {
-                                System.err.println("  (unhandled) " + "" + javaClass.getClassName() + "::" + method.getName()
+                                unhandled( "" + javaClass.getClassName() + "::" + method.getName()
                                         + "() " + anInstruction);
                                 if (skipErrors()) {
                                     continue;
@@ -621,6 +625,15 @@ public class Main {
         }
 
         System.err.println("Now use d3_helloworld_csv.git/singlefile_automated/ for visualization");
+    }
+
+    private static void unhandled(String string) {
+        if (skipErrors()) {
+            System.err.println("[warning] "+  string);
+        }else {
+            System.err.println("[fatal] " + string);
+            throw new RuntimeException(string);
+        }
     }
 
     private static void printStack(String string, Stack stack) {
