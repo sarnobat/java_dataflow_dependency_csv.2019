@@ -11,6 +11,7 @@ import java.util.LinkedList;
 import java.util.Stack;
 
 import org.apache.bcel.classfile.ClassParser;
+import org.apache.bcel.classfile.Constant;
 import org.apache.bcel.classfile.ConstantPool;
 import org.apache.bcel.classfile.Field;
 import org.apache.bcel.classfile.JavaClass;
@@ -442,7 +443,7 @@ public class Main {
                                 }
                             } else if (anInstruction instanceof ASTORE) {
 
-                                unhandled( "ASTORE");
+//                                unhandled( "ASTORE");
 
                                 if (stackState.empty()) {
                                     if (skipErrors()) {
@@ -460,7 +461,8 @@ public class Main {
 //                                } else {
                                     try {
                                         ASTORE astore = (ASTORE) anInstruction;
-                                        
+                                        int stackSize = astore.consumeStack(cpg);
+                                        System.err.println("[debug] Main.main() ASTORE " + astore.getLength() + "::" + stackSize);
                                         int index = astore.getIndex();
                                         if ("null".equals(astore.getName())) {
                                             System.err.println("[debug] Main.main() variable is null because maybe the target class hasn't been parsed yet. Not sure.");
@@ -541,8 +543,16 @@ public class Main {
                                 stackState.push("return " + className.substring(className.lastIndexOf('.') + 1) + "_"
                                         + methodName);
                             } else if (anInstruction instanceof LDC) {
-                                stackState.push("constant_" + ((LDC) anInstruction).getValue(cpg).toString());
-                                System.err.println();
+                                LDC ldc = (LDC) anInstruction;
+                                Constant value = cp.getConstant(ldc.getIndex());
+                                Constant value1 = cpg.getConstant(ldc.getIndex());
+                                System.err.println("[debug] Main.main() LDC (load constant) type = " + ldc.getType(cpg));
+                                System.err.println("[debug] Main.main() LDC (load constant) index = " + ldc.getIndex());
+                                System.err.println("[debug] Main.main() LDC (load constant) length = " + ldc.getLength());
+                                System.err.println("[debug] Main.main() LDC (load constant) name = " + ldc.getName());
+                                System.err.println(
+                                        "[debug] Main.main() LDC (load constant) value = " + value1);
+                                stackState.push("constant_" + ldc.getValue(cpg).toString());
                             } else if (anInstruction instanceof NEWARRAY) {
                                 unhandled( "NEWARRAY");
                             } else if (anInstruction instanceof PUTFIELD) {
