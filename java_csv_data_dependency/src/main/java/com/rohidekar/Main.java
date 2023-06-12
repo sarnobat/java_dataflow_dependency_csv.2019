@@ -226,10 +226,12 @@ public class Main {
                                         + "()\tSIPUSH = " + anInstruction);
                                 stackState.push("constant_" + ((SIPUSH) anInstruction).getValue());
                             } else if (anInstruction instanceof BIPUSH) {
-                                unhandled( "" + javaClass.getClassName() + "::" + method.getName()
-                                        + "()\tBIPUSH = " + anInstruction);
+//                                unhandled( "" + javaClass.getClassName() + "::" + method.getName()
+//                                        + "()\tBIPUSH = " + anInstruction);
                                 String name = ((BIPUSH)anInstruction).getName();
-                                stackState.push("constant_" + ((BIPUSH) anInstruction).getValue());
+                                Number value = ((BIPUSH) anInstruction).getValue();
+                                System.err.println("Main.main() BIPUSH (byte push onto stack): " + value);
+                                stackState.push("constant_" + value);
                                 throw new RuntimeException("PICKUP");
                             } else if (anInstruction instanceof ACONST_NULL) {
                                 unhandled( "" + javaClass.getClassName() + "::" + method.getName()
