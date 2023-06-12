@@ -544,15 +544,15 @@ public class Main {
                                         + methodName);
                             } else if (anInstruction instanceof LDC) {
                                 LDC ldc = (LDC) anInstruction;
-                                Constant value = cp.getConstant(ldc.getIndex());
-                                Constant value1 = cpg.getConstant(ldc.getIndex());
-                                System.err.println("[debug] Main.main() LDC (load constant) type = " + ldc.getType(cpg));
-                                System.err.println("[debug] Main.main() LDC (load constant) index = " + ldc.getIndex());
-                                System.err.println("[debug] Main.main() LDC (load constant) length = " + ldc.getLength());
-                                System.err.println("[debug] Main.main() LDC (load constant) name = " + ldc.getName());
-                                System.err.println(
-                                        "[debug] Main.main() LDC (load constant) value = " + value1);
-                                stackState.push("constant_" + ldc.getValue(cpg).toString());
+//                                Constant value1 = cpg.getConstant(ldc.getIndex());
+//                                System.err.println("[debug] Main.main() LDC (load constant) type = " + ldc.getType(cpg));
+//                                System.err.println("[debug] Main.main() LDC (load constant) index = " + ldc.getIndex());
+//                                System.err.println("[debug] Main.main() LDC (load constant) length = " + ldc.getLength());
+//                                System.err.println("[debug] Main.main() LDC (load constant) name = " + ldc.getName());
+//                                System.err.println(
+//                                        "[debug] Main.main() LDC (load constant) value = " + value1);
+                                String value = ldc.getValue(cpg).toString();
+                                stackState.push("constant_" + value);
                             } else if (anInstruction instanceof NEWARRAY) {
                                 unhandled( "NEWARRAY");
                             } else if (anInstruction instanceof PUTFIELD) {

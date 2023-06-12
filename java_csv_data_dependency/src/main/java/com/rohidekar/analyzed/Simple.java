@@ -27,7 +27,7 @@ public class Simple {
     public int age;
     Person() {
 //        String aName = "John Smith";
-//        System.out.println("Simple.Person.Person()");
+        System.out.println("Simple.Person.Person()");
         int age1 = 11;
         this.age = age1;
 //        fullName = aName;
