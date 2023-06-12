@@ -408,6 +408,8 @@ public class Main {
 
 //                                unhandled( "ISTORE");
 
+                                ISTORE istore = ((ISTORE)anInstruction);
+                                int istoreBytes = istore.consumeStack(cpg);
                                 if (stackState.empty()) {
                                     if (skipErrors()) {
                                         continue;

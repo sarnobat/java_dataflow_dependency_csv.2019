@@ -14,7 +14,8 @@ public class Simple {
 //    String myString2 = "bar";
 //    String mystring3 = myString1 + myString2;
     Person person = new Person();
-//    int myInt = person.age;
+//      new Person();
+    int myInt = person.age;
 //    System.out.println(myInt);
   }
 
