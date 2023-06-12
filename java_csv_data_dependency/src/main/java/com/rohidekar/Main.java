@@ -526,11 +526,12 @@ public class Main {
                                 INVOKESPECIAL invokespecial = (INVOKESPECIAL) anInstruction;
                                 String className = ((INVOKESPECIAL) anInstruction).getClassName(cpg);
                                 String methodName = ((INVOKESPECIAL) anInstruction).getMethodName(cpg);
-                                System.err.println("[debug] Main.main() INVOKESPECIAL - " + className + "::" + methodName +"()");
+                                int length = invokespecial.getArgumentTypes(cpg).length;
+                                System.err.println("[debug] Main.main() INVOKESPECIAL - " + className + "::"
+                                        + methodName + "(" + length + ")");
                                 String paramValue1 = stackState.pop();
 //                                System.err.println("[debug] Main.main() popped instance reference\t" + paramValue1);
 
-                                int length = invokespecial.getArgumentTypes(cpg).length;
                                 while (length > 0) {
                                     String paramValue = stackState.pop();
 //                                    System.err.println("[debug] Main.main() popping parameter\t\t" + paramValue);
