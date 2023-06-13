@@ -150,9 +150,9 @@ public class Main {
                                 unhandled( "ATHROW");
                             } else if (anInstruction instanceof GETFIELD) {
                                 GETFIELD field = (GETFIELD)anInstruction;
+                                System.err.println("[debug] Main.main() GETFIELD " + field );
                                 printStack("[debug] Main.main() GETFIELD before consume", stackForMethod);
                                 int consumed = field.consumeStack(cpg);
-
                                 printStack("[debug] Main.main() GETFIELD after consume", stackForMethod);
                                 System.err.println("[debug] Main.main() GETFIELD consumed = " + consumed);
                                 String a = stackForMethod.pop();
@@ -161,6 +161,7 @@ public class Main {
                                 String value = field.toString();
                                 printTable(localVariableTable);
                                 String name = field.getClassName(cpg) + "::" + field.getName(cpg);
+                                stackForMethod.push(name);
 //                                unhandled( "GETFIELD " +  name + " = " + value);
                                 System.out.println("[out.csv] [getfield.csv] " +  name + "," + a );                                
                             } else if (anInstruction instanceof CHECKCAST) {
@@ -227,9 +228,10 @@ public class Main {
                                         + "()\tICONST = " + anInstruction);
                                 stackForMethod.push("constant_" + ((ICONST) anInstruction).getValue());
                             } else if (anInstruction instanceof SIPUSH) {
-                                unhandled( "" + javaClass.getClassName() + "::" + method.getName()
+                                System.err.println("[debug] Main.main() " + javaClass.getClassName() + "::" + method.getName()
                                         + "()\tSIPUSH = " + anInstruction);
-                                stackForMethod.push("constant_" + ((SIPUSH) anInstruction).getValue());
+                                SIPUSH sipush = (SIPUSH) anInstruction;
+                                stackForMethod.push("constant_" + sipush.getValue());
                             } else if (anInstruction instanceof BIPUSH) {
 //                                unhandled( "" + javaClass.getClassName() + "::" + method.getName()
 //                                        + "()\tBIPUSH = " + anInstruction);
@@ -371,12 +373,20 @@ public class Main {
                                                     + ". Probably you have the wrong program counter");
                                         }
                                     }
-                                    String className = variable.getSignature();
-                                    stackForMethod.push("local_variable_inside_" + className.substring(className.lastIndexOf('.') + 1) + "::"
-                                            + method.getName() + "()::" + variable.getName());
+//                                    String className = variable.getSignature();
+                                    String className = javaClass.getClassName();
+                                    String qualifiedMethodName = className.substring(className.lastIndexOf('.') + 1) + "::"
+                                                                                                                    + method.getName() + "()::";
+                                    String item = qualifiedMethodName
+                                                                                + variable.getName();
+//                                    stackForMethod.push("local_variable_inside_" + item);
+                                    stackForMethod.push(item);
+                                    System.out.println("[out.csv] [iload.csv] " + qualifiedMethodName + "param"
+                                            + variableIndex + "," + item);
+                                    
                                     System.err.println("[debug] Main.main() ILOAD signature " + variable.getSignature());
                                     System.err.println("[debug] Main.main() ILOAD just pushed onto stack (" + variableIndex + "): "
-                                            + variable.getName());
+                                            + item);
                                 }
                             } else if (anInstruction instanceof ALOAD) {
                                 ALOAD aload = (ALOAD) anInstruction;
@@ -421,7 +431,7 @@ public class Main {
                                     if (skipErrors()) {
                                         continue;
                                     } else {
-                                        throw new RuntimeException(
+                                        throw new RuntimeException(istoreBytes + " " +
                                                 "We can't be calling store if nothing was pushed onto the stack");
                                     }
                                 }
@@ -550,17 +560,22 @@ public class Main {
                                 int length = invokespecial.getArgumentTypes(cpg).length;
                                 System.err.println("[debug] Main.main() INVOKESPECIAL - " + className + "::"
                                         + methodName + "(" + length + ")");
-                                String paramValue1 = stackForMethod.pop();
+//                                String paramValue1 = stackForMethod.pop();
 //                                System.err.println("[debug] Main.main() popped instance reference\t" + paramValue1);
-
-                                while (length > 0) {
+                                Type[] argTypes = invokespecial.getArgumentTypes(cpg);
+                                int paramNum = 1;
+                                String qualifiedMethodName = className.substring(className.lastIndexOf('.') + 1) + "::" + methodName + "()";
+                                for (Type argType : argTypes) {
                                     String paramValue = stackForMethod.pop();
-//                                    System.err.println("[debug] Main.main() popping parameter\t\t" + paramValue);
+                                    System.err.println("[debug] Main.main() popping parameter\t\t" + paramValue + " of type " + argType.getSignature());
+                                    System.out.println("[out.csv] [invokespecial.csv] " + paramValue + ","+qualifiedMethodName+"::param" + paramNum);
+                                    ++paramNum;
+                                }
+                                while (length > 0) {
                                     --length;
                                 }
 
-                                stackForMethod.push("return_value_from" + className.substring(className.lastIndexOf('.') + 1) + "_"
-                                        + methodName + "()");
+                                stackForMethod.push("return_value_from" + qualifiedMethodName);
                             } else if (anInstruction instanceof LDC) {
                                 LDC ldc = (LDC) anInstruction;
 //                                Constant value1 = cpg.getConstant(ldc.getIndex());
