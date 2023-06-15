@@ -33,9 +33,7 @@ import org.apache.bcel.generic.*;
  * usage: mvn exec:java -Dexec.args="$HOME/trash/myproj/target"
  *
  * <p>
- * A lot of this may be achievable without this tool, but instead using: javap
- * -verbose
- * $HOME/webservices/cmp/authentication-services/target/classes/com/mycompany/authentication/AuthorizationServlet.class
+ * A lot of this may be achievable without this tool, but instead using: javap -verbose path/to/My.class
  * plus an awk script possibly.
  */
 public class Main {
