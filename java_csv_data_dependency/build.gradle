@@ -14,12 +14,12 @@ dependencies {
     implementation 'commons-io:commons-io:2.4'
 }
 
-jar {
-    manifest {
-        mainClass = 'com.rohidekar.Main'
-    }
-}
+// jar {
+//     manifest {
+//         mainClass = 'com.rohidekar.Main'
+//     }
+// }
 
-task wrapper(type: Wrapper) {
-    gradleVersion = '6.9'
-}
+// task wrapper(type: Wrapper) {
+//     gradleVersion = '6.9'
+// }
