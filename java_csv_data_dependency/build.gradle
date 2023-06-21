@@ -1,0 +1,25 @@
+apply plugin: 'java'
+
+group = 'com.rohidekar'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'com.google.guava:guava:19.0'
+    implementation 'org.apache.bcel:bcel:6.0'
+    implementation 'commons-collections:commons-collections:3.2.2'
+    implementation 'commons-io:commons-io:2.4'
+}
+
+jar {
+    manifest {
+        mainClass = 'com.rohidekar.Main'
+    }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '6.9'
+}
