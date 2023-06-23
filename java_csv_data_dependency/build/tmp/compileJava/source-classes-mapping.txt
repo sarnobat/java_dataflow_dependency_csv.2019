@@ -1,0 +1,9 @@
+gr/gousiosg/javacg/stat/MethodVisitor.java
+ gr.gousiosg.javacg.stat.MethodVisitor
+gr/gousiosg/javacg/stat/ClassVisitor.java
+ gr.gousiosg.javacg.stat.ClassVisitor
+com/rohidekar/analyzed/Simple.java
+ com.rohidekar.analyzed.Simple
+ com.rohidekar.analyzed.Simple$Person
+com/rohidekar/Main.java
+ com.rohidekar.Main

@@ -1,0 +1,142 @@
+Classfile /Volumes/git/github/java_dataflow_dependency_csv/java_csv_data_dependency/build/classes/java/main/com/rohidekar/analyzed/Simple$Person.class
+  Last modified Jun 20, 2023; size 443 bytes
+  MD5 checksum 86e496e85b096778346a43fa35c4db3e
+  Compiled from "Simple.java"
+class com.rohidekar.analyzed.Simple$Person
+  minor version: 0
+  major version: 52
+  flags: ACC_SUPER
+Constant pool:
+   #1 = Methodref          #4.#19         // java/lang/Object."<init>":()V
+   #2 = Fieldref           #3.#20         // com/rohidekar/analyzed/Simple$Person.age:I
+   #3 = Class              #22            // com/rohidekar/analyzed/Simple$Person
+   #4 = Class              #23            // java/lang/Object
+   #5 = Utf8               age
+   #6 = Utf8               I
+   #7 = Utf8               <init>
+   #8 = Utf8               (I)V
+   #9 = Utf8               Code
+  #10 = Utf8               LineNumberTable
+  #11 = Utf8               LocalVariableTable
+  #12 = Utf8               this
+  #13 = Utf8               Person
+  #14 = Utf8               InnerClasses
+  #15 = Utf8               Lcom/rohidekar/analyzed/Simple$Person;
+  #16 = Utf8               iAge
+  #17 = Utf8               SourceFile
+  #18 = Utf8               Simple.java
+  #19 = NameAndType        #7:#24         // "<init>":()V
+  #20 = NameAndType        #5:#6          // age:I
+  #21 = Class              #25            // com/rohidekar/analyzed/Simple
+  #22 = Utf8               com/rohidekar/analyzed/Simple$Person
+  #23 = Utf8               java/lang/Object
+  #24 = Utf8               ()V
+  #25 = Utf8               com/rohidekar/analyzed/Simple
+{
+  public int age;
+    descriptor: I
+    flags: ACC_PUBLIC
+
+  com.rohidekar.analyzed.Simple$Person(int);
+    descriptor: (I)V
+    flags:
+    Code:
+      stack=2, locals=2, args_size=2
+         0: aload_0
+         1: invokespecial #1                  // Method java/lang/Object."<init>":()V
+         4: aload_0
+         5: iload_1
+         6: putfield      #2                  // Field age:I
+         9: return
+      LineNumberTable:
+        line 29: 0
+        line 34: 4
+        line 36: 9
+      LocalVariableTable:
+        Start  Length  Slot  Name   Signature
+            0      10     0  this   Lcom/rohidekar/analyzed/Simple$Person;
+            0      10     1  iAge   I
+}
+SourceFile: "Simple.java"
+Classfile /Volumes/git/github/java_dataflow_dependency_csv/java_csv_data_dependency/build/classes/java/main/com/rohidekar/analyzed/Simple.class
+  Last modified Jun 20, 2023; size 631 bytes
+  MD5 checksum a2725aa6f80fb0af4b242d5d9fc3777f
+  Compiled from "Simple.java"
+public class com.rohidekar.analyzed.Simple
+  minor version: 0
+  major version: 52
+  flags: ACC_PUBLIC, ACC_SUPER
+Constant pool:
+   #1 = Methodref          #6.#26         // java/lang/Object."<init>":()V
+   #2 = Class              #27            // com/rohidekar/analyzed/Simple$Person
+   #3 = Methodref          #2.#28         // com/rohidekar/analyzed/Simple$Person."<init>":(I)V
+   #4 = Fieldref           #2.#29         // com/rohidekar/analyzed/Simple$Person.age:I
+   #5 = Class              #30            // com/rohidekar/analyzed/Simple
+   #6 = Class              #31            // java/lang/Object
+   #7 = Utf8               Person
+   #8 = Utf8               InnerClasses
+   #9 = Utf8               <init>
+  #10 = Utf8               ()V
+  #11 = Utf8               Code
+  #12 = Utf8               LineNumberTable
+  #13 = Utf8               LocalVariableTable
+  #14 = Utf8               this
+  #15 = Utf8               Lcom/rohidekar/analyzed/Simple;
+  #16 = Utf8               main
+  #17 = Utf8               ([Ljava/lang/String;)V
+  #18 = Utf8               args
+  #19 = Utf8               [Ljava/lang/String;
+  #20 = Utf8               thePerson
+  #21 = Utf8               Lcom/rohidekar/analyzed/Simple$Person;
+  #22 = Utf8               myInt
+  #23 = Utf8               I
+  #24 = Utf8               SourceFile
+  #25 = Utf8               Simple.java
+  #26 = NameAndType        #9:#10         // "<init>":()V
+  #27 = Utf8               com/rohidekar/analyzed/Simple$Person
+  #28 = NameAndType        #9:#32         // "<init>":(I)V
+  #29 = NameAndType        #33:#23        // age:I
+  #30 = Utf8               com/rohidekar/analyzed/Simple
+  #31 = Utf8               java/lang/Object
+  #32 = Utf8               (I)V
+  #33 = Utf8               age
+{
+  public com.rohidekar.analyzed.Simple();
+    descriptor: ()V
+    flags: ACC_PUBLIC
+    Code:
+      stack=1, locals=1, args_size=1
+         0: aload_0
+         1: invokespecial #1                  // Method java/lang/Object."<init>":()V
+         4: return
+      LineNumberTable:
+        line 7: 0
+      LocalVariableTable:
+        Start  Length  Slot  Name   Signature
+            0       5     0  this   Lcom/rohidekar/analyzed/Simple;
+
+  public static void main(java.lang.String[]);
+    descriptor: ([Ljava/lang/String;)V
+    flags: ACC_PUBLIC, ACC_STATIC
+    Code:
+      stack=3, locals=3, args_size=1
+         0: new           #2                  // class com/rohidekar/analyzed/Simple$Person
+         3: dup
+         4: sipush        4444
+         7: invokespecial #3                  // Method com/rohidekar/analyzed/Simple$Person."<init>":(I)V
+        10: astore_1
+        11: aload_1
+        12: getfield      #4                  // Field com/rohidekar/analyzed/Simple$Person.age:I
+        15: istore_2
+        16: return
+      LineNumberTable:
+        line 16: 0
+        line 18: 11
+        line 20: 16
+      LocalVariableTable:
+        Start  Length  Slot  Name   Signature
+            0      17     0  args   [Ljava/lang/String;
+           11       6     1 thePerson   Lcom/rohidekar/analyzed/Simple$Person;
+           16       1     2 myInt   I
+}
+SourceFile: "Simple.java"
